@@ -5,7 +5,7 @@ import java.util.*;
     Owen Wang
     Last modified: 2022-02-15
 
-    Asks for two words, then outputs both of them in new lines then both in one line
+    Asks for two words, then outputs both of them in new lines then both in one line.
 */
 public class Input_4 {
     public static void main(String[] args) {

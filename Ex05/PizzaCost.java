@@ -5,7 +5,7 @@ import java.util.*;
     Owen Wang
     Last modified: 2022-02-15
 
-    Asks user for pizza diameter and gives total cost of pizza
+    Asks user for pizza diameter and gives total cost of pizza.
 */
 public class PizzaCost {
     public static void main(String[] args) {

@@ -5,7 +5,7 @@ import java.util.*;
     Owen Wang
     Last modified: 2022-02-15
 
-    Asks for three double values then outputs average
+    Asks for three double values then outputs average.
 */
 public class Average {
     public static void main(String[] args) {

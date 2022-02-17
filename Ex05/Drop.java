@@ -5,7 +5,7 @@ import java.util.*;
     Owen Wang
     Last modified: 2022-02-15
 
-    Asks for time under 4.5 seconds and outputs height of object when dropped from 100 m
+    Asks for time under 4.5 seconds and outputs height of object when dropped from 100 m.
 */
 public class Drop {
     public static void main(String[] args) {
