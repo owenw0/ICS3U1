@@ -16,6 +16,6 @@ public class Height {
 
         System.out.print("Enter height (in): ");
         height = in.nextDouble();
-        System.out.printf("Height in cm: %.2f cm", height * in_conversion);
+        System.out.printf("Height in cm: %.2f cm\n", height * in_conversion);
     }
 }

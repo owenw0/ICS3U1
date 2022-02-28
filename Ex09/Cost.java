@@ -21,6 +21,6 @@ public class Cost {
         bags = in.nextInt();
 
         total = (cost + bags * 0.05) * HST;
-        System.out.printf("Total: $%,.2f", total);
+        System.out.printf("Total: $%,.2f\n", total);
     }
 }
