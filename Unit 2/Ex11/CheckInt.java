@@ -9,9 +9,11 @@ import java.util.*;
 */
 public class CheckInt {
     public static void main(String[] args) {
+        // variable declaration
         int input;
         Scanner sc = new Scanner(System.in);
 
+        // prompts user for number
         System.out.print("Enter integer: ");
         input = sc.nextInt();
 

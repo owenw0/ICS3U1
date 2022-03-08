@@ -9,10 +9,12 @@ import java.util.*;
 */
 public class Discriminant {
     public static void main(String[] args) {
-        double a, b, c;
+        // variable declaration
+        double a, b, c, discriminant;
         int roots;
         Scanner sc = new Scanner(System.in);
 
+        // prompts user for values
         System.out.print("Enter 'a' value: ");
         a = sc.nextDouble();
         System.out.print("Enter 'b' value: ");
@@ -20,15 +22,18 @@ public class Discriminant {
         System.out.print("Enter 'c' value: ");
         c = sc.nextDouble();
 
+        discriminant = Math.pow(b, 2) - 4 * a * c; // calculates discriminant
+
         // determines root amount
-        if (Math.pow(b, 2) - 4 * a * c > 0) {
+        if (discriminant > 0) {
             roots = 2;
-        } else if (Math.pow(b, 2) - 4 * a * c == 0) {
+        } else if (discriminant == 0) {
             roots = 1;
         } else {
             roots = 0;
         }
 
+        // outputs # of roots
         if (roots == 2) {
             System.out.println("Two roots");
         } else if (roots == 1) {

@@ -9,14 +9,15 @@ import java.util.*;
 */
 public class Pass {
     public static void main(String[] args) {
+        // variable declaration
         double answer;
         Scanner sc = new Scanner(System.in);
 
-        // Asks user what 1 + 1 is
+        // prompts user for answer to 1 + 1
         System.out.print("1 + 1 = ");
         answer = sc.nextDouble();
 
-        // prompts user for answer
+        // determines pass or fail
         if (answer == 2) {
             System.out.println("Pass");
         } else {

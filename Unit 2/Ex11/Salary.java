@@ -9,6 +9,7 @@ import java.util.*;
 */
 public class Salary {
     public static void main(String[] args) {
+        // variable declaration
         int sales;
         double salary = 1000;
         Scanner sc = new Scanner(System.in);
@@ -17,11 +18,11 @@ public class Salary {
         System.out.print("Enter # of sales made: ");
         sales = sc.nextInt();
 
-        // determines salary
+        // determines salary based on sales
         if (sales >= 10) {
             salary += salary * (double) sales / 100;
         }
 
-        System.out.printf("Salary: $%,.2f", salary);
+        System.out.printf("Salary: $%,.2f", salary); // outputs salary
     }
 }

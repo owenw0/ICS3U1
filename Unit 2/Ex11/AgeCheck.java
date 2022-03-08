@@ -9,6 +9,7 @@ import java.util.*;
 */
 public class AgeCheck {
     public static void main(String[] args) {
+        // variable declaration
         int age;
         Scanner sc = new Scanner(System.in);
 
