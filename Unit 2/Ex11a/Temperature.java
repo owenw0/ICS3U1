@@ -1,3 +1,7 @@
+// owen ur code sucks
+// im better in valorant btw :)
+
+
 import java.util.*;
 
 /*
