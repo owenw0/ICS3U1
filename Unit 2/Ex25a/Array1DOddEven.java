@@ -9,7 +9,7 @@ import java.util.*;
 public class Array1DOddEven {
     public static void main(String[] args) {
         // variable declaration
-        final int LEN = 3;
+        final int LEN = 10;
         int status;
         boolean error = false;
         int[] arr = new int[LEN];
@@ -27,16 +27,17 @@ public class Array1DOddEven {
         } else {
             status = 1;
         }
-        for (int i = 1; i < LEN; i++) {
+        for (int i = 1; i < LEN && !error; i++) {
             if (arr[i] % 2 != status) {
                 error = true;
-                break;
             }
         }
         if (error) {
             System.out.println("Array not all even/odd.");
+        } else if (status == 1) {
+            System.out.println("Array all odd.");
         } else {
-            System.out.println("Array all even/odd");
+            System.out.println("Array all even.");
         }
     }
 }
