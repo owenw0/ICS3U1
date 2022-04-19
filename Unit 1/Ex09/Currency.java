@@ -10,12 +10,12 @@ import java.util.*;
 public class Currency {
     public static void main(String[] args) {
         double usd;
-        final double conversion = 1.29;
+        final double CONVERSION = 1.29;
         Scanner in = new Scanner(System.in);
 
         System.out.print("Enter USD amount: $");
         usd = in.nextDouble();
 
-        System.out.printf("CAD Amount: $%,.2f\n", usd * conversion);
+        System.out.printf("CAD Amount: $%,.2f\n", usd * CONVERSION);
     }
 }
