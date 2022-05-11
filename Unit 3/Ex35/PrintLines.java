@@ -10,10 +10,10 @@ import java.io.*;
 public class PrintLines {
     public static void main(String[] args) {
         // varable declaration
-        String fileName = "line.txt";
+        String file = "line.txt";
         String line;
         try {
-            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            BufferedReader in = new BufferedReader(new FileReader(file));
             line = in.readLine();
             while (line != null) {
                 System.out.println(line);
@@ -22,7 +22,7 @@ public class PrintLines {
         } catch (InputMismatchException e) {
             System.out.println("\nNon-string data detected. File read terminated.");
         } catch (IOException e) {
-            System.out.println(e + "  Problem reading " + fileName);
+            System.out.println(e + "  Problem reading " + file);
         }
     }
 }

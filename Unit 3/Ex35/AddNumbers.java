@@ -10,10 +10,10 @@ import java.io.*;
 public class AddNumbers {
     public static void main(String[] args) {
         // variable declaration
-        String fileName = "numbers.txt";
+        String file = "numbers.txt";
         int num, total = 0;
         try {
-            Scanner fs = new Scanner(new File(fileName));
+            Scanner fs = new Scanner(new File(file));
             while (true) {
                 num = fs.nextInt();
                 total += num;
