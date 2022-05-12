@@ -11,13 +11,12 @@ public class GroupTotaler {
     public static void main(String[] args) {
         // variable declaration
         String file = "input.txt";
-        String name = "";
+        String name;
         String line = "";
         int total = 0;
-        BufferedReader in;
 
         try {
-            in = new BufferedReader(new FileReader(file));
+            BufferedReader in = new BufferedReader(new FileReader(file));
             name = in.readLine();
             while (line != null) {
                 try {
