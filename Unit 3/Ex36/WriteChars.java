@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 
 /*
-    WriteChars.java
+    WriteChars
     Owen Wang
     Last modified: 2022-05-12
     Read input and output each char on newline.
