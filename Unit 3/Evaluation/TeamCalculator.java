@@ -26,6 +26,7 @@ public class TeamCalculator {
             while (line != null) {
                 try {
                     while (line != null) {
+                        // add up player points
                         line = in.readLine();
                         player_total += Double.parseDouble(line);
                         num_entries++;
@@ -33,18 +34,23 @@ public class TeamCalculator {
                 } catch (IOException e) {
                     System.out.println(e);
                 } catch (NumberFormatException e) {
-                    // player name line has been reached
+                    // player name reached, output average and reset variables
                     System.out.print(name);
                     name = line;
                     System.out.printf(" average score: %.2f\n", player_total / num_entries);
+                    total += player_total / num_entries;
                     num_players++;
                     player_total = 0;
                     num_entries = 0;
+                } catch (NullPointerException e) {
+                    System.out.println(e);
                 }
             }
+            in.close();
         } catch (IOException e) {
             System.out.println(e);
         }
-        System.out.printf("Team average: %.2f", total / num_players);
+        // output team average
+        System.out.printf("Team average: %.2f\n", total / num_players);
     }
 }
