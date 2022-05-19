@@ -36,7 +36,7 @@ public class TeamCalculator {
                     // player name line has been reached
                     System.out.print(name);
                     name = line;
-                    System.out.printf("'s average score: %.2f\n", player_total / num_entries);
+                    System.out.printf(" average score: %.2f\n", player_total / num_entries);
                     num_players++;
                     player_total = 0;
                     num_entries = 0;
