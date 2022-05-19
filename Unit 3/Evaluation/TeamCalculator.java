@@ -45,6 +45,6 @@ public class TeamCalculator {
         } catch (IOException e) {
             System.out.println(e);
         }
-        System.out.printf("Team average: %.2f", player_total / num_players);
+        System.out.printf("Team average: %.2f", total / num_players);
     }
 }
