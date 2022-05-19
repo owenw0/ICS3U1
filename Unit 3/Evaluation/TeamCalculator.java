@@ -34,15 +34,14 @@ public class TeamCalculator {
                     System.out.println(e);
                 } catch (NumberFormatException e) {
                     // player name line has been reached
-                    System.out.println(name);
                     name = line;
                     System.out.printf("%s average score: %.2f\n", name, player_total / num_entries);
                     num_players++;
+                    player_total = 0;
+                    num_entries = 0;
                 }
             }
         } catch (IOException e) {
-            System.out.println(e);
-        } catch (NumberFormatException e) {
             System.out.println(e);
         }
         System.out.printf("Team average: %.2f", player_total / num_players);
