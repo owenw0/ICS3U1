@@ -25,10 +25,9 @@ public class Main {
                 // prompt for name
                 System.out.print("Enter last name: ");
                 last_name = sc.nextLine();
-                System.out.print("Enter first name: ")
+                System.out.print("Enter first name: ");
                 first_name = sc.nextLine();
-                
-                
+
                 last_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1).toLowerCase();
                 first_name = first_name.substring(0, 1).toUpperCase() + first_name.substring(1).toLowerCase();
 
