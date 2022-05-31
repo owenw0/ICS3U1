@@ -54,8 +54,8 @@ public class Main {
 
     public static String[] create_profile(String pin) {
         // variable declaration
-        boolean unique = false, valid_pin = false;
-        String last_name, first_name, num;
+        boolean unique = false, pin_error = true;
+        String last_name, first_name, num, new_pin = "";
         String[] data = new String[5];
         Scanner sc = new Scanner(System.in);
         Random random = new Random();
@@ -71,44 +71,43 @@ public class Main {
         last_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1).toLowerCase();
         first_name = first_name.substring(0, 1).toUpperCase() + first_name.substring(1).toLowerCase();
 
+        if (pin == "") {
+            while (pin_error) {
+                System.out.print("Enter 4-digit PIN: ");
+                new_pin = sc.nextLine();
+                if (new_pin.length() != 4) {
+                    System.out.println("\nInvalid PIN.");
+                } else {
+                    try {
+                        Integer.parseInt(new_pin);
+                        pin_error = false;
+                    } catch (NumberFormatException e) {
+                        System.out.println("\nInvalid PIN.");
+                    }
+                }
+            }
+        } else {
+            new_pin = pin;
+        }
+
         do {
             // generate random customer number
             num = Integer.toString(random.nextInt(100000, 999999));
             // determine if number is unique
             try {
-                br = new BufferedReader(new FileReader(num));
+                br = new BufferedReader(new FileReader(num + ".txt"));
                 unique = true;
             } catch (IOException e) {
             }
         } while (unique = false);
-        System.out.printf("\nYour customer number: %s\n", num);
 
-        // confirm PIN
-        do {
-            try {
-                if (pin.length() != 4) {
-                    valid_pin = false;
-                } else {
-                    Integer.parseInt(pin);
-                    valid_pin = true;
-                }
-            } catch (NumberFormatException e) {
-                valid_pin = false;
-            }
-
-            // determine if pin is valid
-            if (valid_pin = false) {
-                System.out.println("Invalid pin.");
-                System.out.print("Enter 4-digit PIN:");
-                pin = sc.nextLine();
-            }
-        } while (!valid_pin);
-        System.out.printf("Your PIN: %s\n\n", pin);
+        System.out.printf("\n\nYour customer number: %s\n", num);
+        System.out.printf("Your PIN: %s\n", new_pin);
 
         // write to file
         try {
-            bw = new BufferedWriter(new FileWriter(num, false));
-            bw.write(pin + "\n");
+            bw = new BufferedWriter(new FileWriter(num + ".txt", false));
+            bw.write(new_pin + "\n");
             bw.write(last_name + "\n");
             bw.write(first_name + "\n");
             bw.close();
@@ -200,7 +199,6 @@ public class Main {
                     case "n":
                     case "no":
                         // return to menu
-                        System.out.println();
                         break;
 
                     default:
@@ -258,8 +256,8 @@ public class Main {
 
     public static void main(String[] args) {
         // variable declaration
-        boolean logged_in = true, menu = true, open_prof = false;
-        String num, pin, file_PIN, line = "", last_name, first_name, open_profile;
+        boolean menu = true, open_prof = false, valid_pin = false, pin_error = true;
+        String num, pin = "", file_pin, open_profile;
         String[] data;
         int choice = 0;
         Scanner sc = new Scanner(System.in);
@@ -267,91 +265,48 @@ public class Main {
 
         // main loop
         while (true) {
-            while (logged_in) {
-                // promt for user information
-                System.out.print("Enter 6-digit customer number: ");
-                num = sc.nextLine();
-                num += ".txt";
-                System.out.print("Enter PIN: ");
-                pin = sc.nextLine();
+            // reset booleans
+            menu = true;
+            open_prof = false;
+            valid_pin = false;
+            pin_error = true;
 
-                try {
-                    br = new BufferedReader(new FileReader(num));
-                    // confirm PIN
-                    file_PIN = br.readLine();
-                    if (pin.equals(file_PIN)) {
-                        br.close();
-                        // retrieve data
-                        data = retrieve_data(num);
-                        do {
-                            // display menu
-                            System.out.println("\nPress 1 to check balance.");
-                            System.out.println("Press 2 to deposit money.");
-                            System.out.println("Press 3 to withdraw money.");
-                            System.out.println("Press 4 to close an account.");
-                            System.out.println("Press 5 to open a new account.");
-                            System.out.println("Press 6 to change PIN.");
-                            System.out.println("Press 7 to logout.");
-                            try {
-                                // prompt for choice
-                                choice = sc.nextInt();
-                            } catch (InputMismatchException e) {
-                                // if string or float was entered
-                                System.out.println("Invalid option.");
-                            }
+            // prompt for user information
+            System.out.print("\nEnter 6-digit customer number (C to create new profile): ");
+            num = sc.nextLine();
 
-                            switch (choice) {
-                                case 1:
-                                    // call check_balance method
-                                    check_balance(num, data);
-                                    menu = false;
-                                    break;
-
-                                case 2:
-                                    // call deposit method
-                                    menu = false;
-                                    break;
-
-                                case 3:
-                                    // call withdraw method
-                                    menu = false;
-                                    break;
-
-                                case 4:
-                                    // call close_account method
-                                    menu = false;
-                                    break;
-
-                                case 5:
-                                    // call open_account method
-                                    menu = false;
-                                    break;
-
-                                case 6:
-                                    // call change_PIN method
-                                    menu = false;
-                                    break;
-
-                                case 7:
-                                    // exit out of loop and logout
-                                    menu = false;
-                                    break;
-
-                                default:
-                                    // output error message if invalid number entered
-                                    System.out.println("Invalid option.");
-                            }
-                        } while (menu);
-                    } else {
-                        // incorrect user PIN entered
-                        System.out.println("Incorrect PIN.\n");
-                    }
-                } catch (IOException e) {
-                    // file not found
-                    System.out.println("User does not exist.");
+            if (num.toLowerCase().equals("c")) {
+                create_profile(pin);
+                pin_error = false;
+            } else if (num.length() != 6) {
+                System.out.println("Invalid customer number.");
+                while (!open_prof) {
                     System.out.print("Would you like to open a new customer profile? (Y/N) ");
                     open_profile = sc.nextLine().toLowerCase();
+                    switch (open_profile) {
+                        case "y", "yes":
+                            data = create_profile(pin);
+                            open_prof = true;
+                            break;
+
+                        case "n", "no":
+                            open_prof = true;
+                            break;
+
+                        default:
+                            System.out.println("\nInvalid option.");
+                    }
+                }
+                pin_error = false;
+            } else {
+                try {
+                    Integer.parseInt(num);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid customer number.");
+
                     while (!open_prof) {
+                        System.out.print("Would you like to open a new customer profile? (Y/N) ");
+                        open_profile = sc.nextLine().toLowerCase();
                         switch (open_profile) {
                             case "y", "yes":
                                 data = create_profile(pin);
@@ -363,14 +318,114 @@ public class Main {
                                 break;
 
                             default:
-                                System.out.println("Invalid option.");
+                                System.out.println("\nInvalid option.");
                         }
-                        System.out.println();
-                        logged_in = false;
                     }
+                    pin_error = false;
                 }
             }
-            logged_in = true;
+            num += ".txt";
+
+            while (pin_error) {
+                System.out.print("Enter PIN: ");
+                pin = sc.nextLine();
+
+                try {
+                    Integer.parseInt(pin);
+                    try {
+                        br = new BufferedReader(new FileReader(num));
+                        // confirm PIN
+                        file_pin = br.readLine();
+                        if (pin.equals(file_pin)) {
+                            br.close();
+                            pin_error = false;
+                            // retrieve data
+                            data = retrieve_data(num);
+                            do {
+                                // display menu
+                                System.out.println("\nPress 1 to check balance.");
+                                System.out.println("Press 2 to deposit money.");
+                                System.out.println("Press 3 to withdraw money.");
+                                System.out.println("Press 4 to close an account.");
+                                System.out.println("Press 5 to open a new account.");
+                                System.out.println("Press 6 to change PIN.");
+                                System.out.println("Press 7 to logout.");
+                                try {
+                                    // prompt for choice
+                                    choice = sc.nextInt();
+                                } catch (InputMismatchException e) {
+                                    // if string or float was entered
+                                    System.out.println("Invalid option.");
+                                }
+
+                                switch (choice) {
+                                    case 1:
+                                        // call check_balance method
+                                        check_balance(num, data);
+                                        break;
+
+                                    case 2:
+                                        // call deposit method
+                                        break;
+
+                                    case 3:
+                                        // call withdraw method
+                                        break;
+
+                                    case 4:
+                                        // call close_account method
+                                        break;
+
+                                    case 5:
+                                        // call open_account method
+                                        break;
+
+                                    case 6:
+                                        // call change_PIN method
+                                        break;
+
+                                    case 7:
+                                        // exit out of loop and logout
+                                        menu = false;
+                                        sc.nextLine();
+                                        break;
+
+                                    default:
+                                        // output error message if invalid number entered
+                                        System.out.println("Invalid option.");
+                                }
+                            } while (menu);
+                        } else {
+                            // incorrect user PIN entered
+                            System.out.println("\nIncorrect PIN.");
+                        }
+                    } catch (IOException e) {
+                        // file not found
+                        System.out.println("User does not exist.");
+
+                        while (!open_prof) {
+                            System.out.print("Would you like to open a new customer profile? (Y/N) ");
+                            open_profile = sc.nextLine().toLowerCase();
+                            switch (open_profile) {
+                                case "y", "yes":
+                                    data = create_profile(pin);
+                                    open_prof = true;
+                                    break;
+
+                                case "n", "no":
+                                    open_prof = true;
+                                    break;
+
+                                default:
+                                    System.out.println("\nInvalid option.");
+                            }
+                        }
+                        pin_error = false;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("\nInvalid PIN.");
+                }
+            }
         }
     }
 }
