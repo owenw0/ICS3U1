@@ -1,6 +1,5 @@
 import java.util.*;
 import java.io.*;
-import java.nio.*;
 
 /*
     ATM System
@@ -12,7 +11,7 @@ public class Main {
     public static boolean create_profile(String pin) {
         // variable declaration
         boolean run = true, unique = false;
-        String choice, last_name, first_name, confirm, num;
+        String choice, last_name, first_name, num;
         Scanner sc = new Scanner(System.in);
         Random random = new Random();
         BufferedWriter bw;
@@ -130,7 +129,7 @@ public class Main {
     public static void check_balance(String num) {
         // variable declaration
         boolean run = true;
-        String checkings_balance = "", savings_balance = "", open_account, acc_type = "";
+        String checkings_balance = "", savings_balance = "", open_account = "", acc_type = "";
         int choice = 0;
         Scanner sc = new Scanner(System.in);
         BufferedReader br;
@@ -147,14 +146,14 @@ public class Main {
                 System.out.println("\nERROR: No open accounts.");
                 System.out.println("Would you like to open an account? (Y/N) ");
                 open_account = sc.nextLine().toLowerCase();
-                switch (choice) {
+                switch (open_account) {
                     case "y":
                     case "yes":
                         open_account(num);
                         break;
 
                     case "n":
-                    case "no";
+                    case "no":
                         // return to menu
                         System.out.println();
                         break;
@@ -237,6 +236,7 @@ public class Main {
                         // retrieve information from file
                         last_name = br.readLine();
                         first_name = br.readLine();
+                        br.close();
                         do {
                             // display menu
                             System.out.println("\nPress 1 to check balance.");
