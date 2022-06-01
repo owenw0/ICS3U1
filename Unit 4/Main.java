@@ -54,7 +54,7 @@ public class Main {
 
     public static String[] create_profile(String pin) {
         // variable declaration
-        boolean unique = false, pin_error = true;
+        boolean unique = false, run = true;
         String last_name, first_name, num, new_pin = "";
         String[] data = new String[5];
         Scanner sc = new Scanner(System.in);
@@ -66,13 +66,13 @@ public class Main {
         last_name = sc.nextLine();
         System.out.print("Enter first name: ");
         first_name = sc.nextLine();
-
         // captitalize first letter of name and lowercase rest
         last_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1).toLowerCase();
         first_name = first_name.substring(0, 1).toUpperCase() + first_name.substring(1).toLowerCase();
 
-        if (pin == "") {
-            while (pin_error) {
+        if (pin == "c") {
+            // if selected to create profile directly
+            while (run) {
                 System.out.print("Enter 4-digit PIN: ");
                 new_pin = sc.nextLine();
                 if (new_pin.length() != 4) {
@@ -80,7 +80,7 @@ public class Main {
                 } else {
                     try {
                         Integer.parseInt(new_pin);
-                        pin_error = false;
+                        run = false;
                     } catch (NumberFormatException e) {
                         System.out.println("\nInvalid PIN.");
                     }
@@ -120,10 +120,38 @@ public class Main {
         return data;
     }
 
+    public static String[] create_profile_prompt(String pin) {
+        // variable declaration
+        boolean run = true;
+        String choice;
+        String data[] = new String[5];
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Invalid customer number.");
+        do {
+            System.out.print("Would you like to open a new customer profile? (Y/N) ");
+            choice = sc.nextLine().toLowerCase();
+            switch (choice) {
+                case "y", "yes":
+                    data = create_profile(pin);
+                    run = false;
+                    break;
+
+                case "n", "no":
+                    run = false;
+                    break;
+
+                default:
+                    System.out.println("\nInvalid option.");
+            }
+        } while (run);
+        return data;
+    }
+
     public static void main(String[] args) {
         // variable declaration
-        boolean menu = true, open_prof = false, valid_pin = false, pin_error = true;
-        String num, pin = "", file_pin, open_profile;
+        boolean menu = true, open_prof = false, valid_pin = false, run = true;
+        String num, pin = "c", file_pin, open_profile;
         String[] data;
         int choice = 0;
         Scanner sc = new Scanner(System.in);
@@ -132,11 +160,11 @@ public class Main {
         // main loop
         while (true) {
             // reset variables
-            pin = "";
+            pin = "c";
             menu = true;
             open_prof = false;
             valid_pin = false;
-            pin_error = true;
+            run = true;
 
             // prompt for user information
             System.out.print("\nEnter 6-digit customer number (C to create new profile): ");
@@ -144,56 +172,21 @@ public class Main {
 
             if (num.toLowerCase().equals("c")) {
                 create_profile(pin);
-                pin_error = false;
+                run = false;
             } else if (num.length() != 6) {
-                System.out.println("Invalid customer number.");
-                while (!open_prof) {
-                    System.out.print("Would you like to open a new customer profile? (Y/N) ");
-                    open_profile = sc.nextLine().toLowerCase();
-                    switch (open_profile) {
-                        case "y", "yes":
-                            data = create_profile(pin);
-                            open_prof = true;
-                            break;
-
-                        case "n", "no":
-                            open_prof = true;
-                            break;
-
-                        default:
-                            System.out.println("\nInvalid option.");
-                    }
-                }
-                pin_error = false;
+                data = create_profile_prompt(pin);
+                run = false;
             } else {
                 try {
                     Integer.parseInt(num);
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid customer number.");
-
-                    while (!open_prof) {
-                        System.out.print("Would you like to open a new customer profile? (Y/N) ");
-                        open_profile = sc.nextLine().toLowerCase();
-                        switch (open_profile) {
-                            case "y", "yes":
-                                data = create_profile(pin);
-                                open_prof = true;
-                                break;
-
-                            case "n", "no":
-                                open_prof = true;
-                                break;
-
-                            default:
-                                System.out.println("\nInvalid option.");
-                        }
-                    }
-                    pin_error = false;
+                    data = create_profile_prompt(pin);
+                    run = false;
                 }
             }
             num += ".txt";
 
-            while (pin_error) {
+            while (run) {
                 System.out.print("Enter PIN: ");
                 pin = sc.nextLine();
 
@@ -205,7 +198,7 @@ public class Main {
                         file_pin = br.readLine();
                         if (pin.equals(file_pin)) {
                             br.close();
-                            pin_error = false;
+                            run = false;
                             // retrieve data
                             data = retrieve_data(num);
                             do {
@@ -219,6 +212,7 @@ public class Main {
                                 System.out.println("Press 7 to logout.");
                                 try {
                                     // prompt for choice
+                                    System.out.println("> ");
                                     choice = sc.nextInt();
                                 } catch (InputMismatchException e) {
                                     // if string or float was entered
@@ -228,33 +222,12 @@ public class Main {
                                 switch (choice) {
                                     case 1:
                                         // call check_balance method
-                                        check_balance(num, data);
-                                        break;
-
-                                    case 2:
-                                        // call deposit method
-                                        break;
-
-                                    case 3:
-                                        // call withdraw method
-                                        break;
-
-                                    case 4:
-                                        // call close_account method
-                                        break;
-
-                                    case 5:
-                                        // call open_account method
-                                        break;
-
-                                    case 6:
-                                        // call change_PIN method
                                         break;
 
                                     case 7:
                                         // exit out of loop and logout
+                                        System.out.println("Logging out...");
                                         menu = false;
-                                        sc.nextLine();
                                         break;
 
                                     default:
@@ -270,24 +243,8 @@ public class Main {
                         // file not found
                         System.out.println("User does not exist.");
 
-                        while (!open_prof) {
-                            System.out.print("Would you like to open a new customer profile? (Y/N) ");
-                            open_profile = sc.nextLine().toLowerCase();
-                            switch (open_profile) {
-                                case "y", "yes":
-                                    data = create_profile(pin);
-                                    open_prof = true;
-                                    break;
-
-                                case "n", "no":
-                                    open_prof = true;
-                                    break;
-
-                                default:
-                                    System.out.println("\nInvalid option.");
-                            }
-                        }
-                        pin_error = false;
+                        data = create_profile_prompt(pin);
+                        run = false;
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("\nInvalid PIN.");
