@@ -120,140 +120,6 @@ public class Main {
         return data;
     }
 
-    public static String[] open_account(String num, String[] data) {
-        // variable declaration
-        String acc_type = "", temp = "";
-        BufferedReader br;
-        BufferedWriter bw;
-
-        try {
-            br = new BufferedReader(new FileReader(num));
-            // read through basic information
-            for (int i = 0; i < 4; i++) {
-                br.readLine();
-            }
-
-            acc_type = br.readLine();
-            if (acc_type == null) {
-                // no accounts open
-                // prompt for which account to open
-                System.out.println("\nSelect account to open:");
-                System.out.println("    1: Checkings");
-                System.out.println("    2: Savings");
-            } else {
-                for (int i = 0; i < 2; i++) {
-                    temp = br.readLine();
-                }
-                if (temp == null) {
-                    // only one account open
-                    if (acc_type == "SAVINGS") {
-                        System.out.println("Opening checkings account.");
-                        try {
-                            bw = new BufferedWriter(new FileWriter(num, true));
-                            bw.write("CHECKINGS");
-                            bw.write("0");
-                        } catch (IOException e) {
-                        }
-                    } else {
-                        System.out.println("Opening savings account.");
-                        try {
-                            bw = new BufferedWriter(new FileWriter(num, true));
-                            bw.write("SAVINGS");
-                            bw.write("0");
-                        } catch (IOException e) {
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-        }
-        return data;
-    }
-
-    public static void check_balance(String num, String[] data) {
-        // variable declaration
-        boolean run = true;
-        String checkings_balance = "", savings_balance = "", open_account = "", acc_type = "";
-        int choice = 0;
-        Scanner sc = new Scanner(System.in);
-        BufferedReader br;
-
-        try {
-            br = new BufferedReader(new FileReader(num));
-            // read first 5 lines (basic customer data)
-            for (int i = 0; i < 5; i++) {
-                acc_type = br.readLine();
-            }
-
-            // check if any accounts are open
-            if (acc_type == null) {
-                System.out.println("\nERROR: No open accounts.");
-                System.out.println("Would you like to open an account? (Y/N) ");
-                open_account = sc.nextLine().toLowerCase();
-                switch (open_account) {
-                    case "y":
-                    case "yes":
-                        open_account(num, data);
-                        break;
-
-                    case "n":
-                    case "no":
-                        // return to menu
-                        break;
-
-                    default:
-                        System.out.println("Invalid option, try again.");
-                }
-            } else {
-                if (acc_type == "CHECKINGS") {
-                    checkings_balance = br.readLine();
-                } else {
-                    savings_balance = br.readLine();
-                }
-
-                acc_type = br.readLine();
-                if (acc_type == null) {
-                    if (checkings_balance != null) {
-                        System.out.printf("Checkings balance: $%.2f\n", checkings_balance);
-                    } else {
-                        System.out.printf("Savings balance: $%.2f\n", savings_balance);
-                    }
-                } else {
-                    if (acc_type == "CHECKINGS") {
-                        checkings_balance = br.readLine();
-                    } else {
-                        savings_balance = br.readLine();
-                    }
-
-                    // prompt for account selection
-                    System.out.println("Select account:");
-                    System.out.println("    1: Checkings");
-                    System.out.println("    2: Savings");
-
-                    while (run) {
-                        try {
-                            System.out.print("[> ");
-                            choice = sc.nextInt();
-                            if (choice == 1) {
-                                System.out.printf("Checkings balance: $%.2f\n", checkings_balance);
-                                run = false;
-                            } else if (choice == 2) {
-                                System.out.printf("Savings balance: $%.2f\n", savings_balance);
-                                run = false;
-                            } else {
-                                // if number is not 1 or 2
-                                System.out.println("Invalid option.");
-                            }
-                        } catch (InputMismatchException e) {
-                            System.out.println("Invalid option.");
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-        }
-    }
-
     public static void main(String[] args) {
         // variable declaration
         boolean menu = true, open_prof = false, valid_pin = false, pin_error = true;
@@ -265,7 +131,8 @@ public class Main {
 
         // main loop
         while (true) {
-            // reset booleans
+            // reset variables
+            pin = "";
             menu = true;
             open_prof = false;
             valid_pin = false;
