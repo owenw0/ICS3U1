@@ -5,9 +5,16 @@ import java.io.*;
     ATM System
     Owen Wang
     Last modified: 2022-05-30
-    Budget ATM System to save banking information.
+    Budget ATM System.
 */
 public class Main {
+
+    /*
+     * void menu()
+     * returns void
+     * no parameters
+     * Displays ATM menu.
+     */
     public static void menu() {
         // display menu
         System.out.println("\nPress 1 to check balance.");
@@ -19,6 +26,12 @@ public class Main {
         System.out.println("Press 7 to logout.");
     }
 
+    /*
+     * void createProfilePrompt(String pin)
+     * returns void
+     * takes in user PIN
+     * Prompts user whether they would like to create a new profile.
+     */
     public static void createProfilePrompt(String pin) {
         // variable declaration
         boolean run = true;
@@ -27,15 +40,18 @@ public class Main {
 
         System.out.println("\nCustomer does not exist.");
         do {
+            // prompts for new profile creation
             System.out.print("Would you like to open a new customer profile? (Y/N) ");
             choice = sc.nextLine().toLowerCase();
             switch (choice) {
                 case "y", "yes":
+                    // calls createProfile to create profile
                     createProfile(pin);
                     run = false;
                     break;
 
                 case "n", "no":
+                    // exits
                     run = false;
                     break;
 
@@ -45,6 +61,12 @@ public class Main {
         } while (run);
     }
 
+    /*
+     * void createProfile(String pin)
+     * returns void
+     * takes in user PIN
+     * Creates a user profile by saving info to file.
+     */
     public static void createProfile(String pin) {
         // variable declaration
         boolean unique = false, run = true;
@@ -54,6 +76,7 @@ public class Main {
         BufferedWriter bw;
         BufferedReader br;
 
+        // prompts for name
         System.out.print("\nEnter first name: ");
         first_name = sc.nextLine();
         System.out.print("Enter last name: ");
@@ -63,14 +86,16 @@ public class Main {
         last_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1).toLowerCase();
 
         if (pin == "") {
-            // if selected to create profile directly
+            // if selected to create profile directly from login menu
             while (run) {
                 System.out.print("\nEnter 4-digit PIN: ");
                 new_pin = sc.nextLine();
                 if (new_pin.length() != 4) {
+                    // if PIN is larger than 4 characters
                     System.out.println("\nInvalid PIN.");
                 } else {
                     try {
+                        // determine if PIN has no characters
                         Integer.parseInt(new_pin);
                         run = false;
                     } catch (NumberFormatException e) {
@@ -79,6 +104,7 @@ public class Main {
                 }
             }
         } else {
+            // sets new PIN
             new_pin = pin;
         }
 
@@ -93,10 +119,11 @@ public class Main {
             }
         } while (unique = false);
 
+        // output new customer number and PIN
         System.out.printf("\n\nYour customer number: %s\n", num);
         System.out.printf("Your PIN: %s\n\n", new_pin);
 
-        // write to file
+        // save info to file
         try {
             bw = new BufferedWriter(new FileWriter(num + ".txt", false));
             bw.write(new_pin);
@@ -107,6 +134,12 @@ public class Main {
         }
     }
 
+    /*
+     * String[] retrieveData(String num)
+     * returns updated data array
+     * takes in customer number
+     * Reads customer file and saves info to data array.
+     */
     public static String[] retrieveData(String num) {
         // variable declaration
         String acc_type = "", checkings = "X", savings = "X";
@@ -119,6 +152,7 @@ public class Main {
             data[1] = br.readLine(); // read first name
             data[2] = br.readLine(); // read last name
 
+            // determine accounts open
             acc_type = br.readLine();
             if (acc_type == null) {
             } else if (acc_type.equals("CHECKINGS")) {
@@ -145,6 +179,12 @@ public class Main {
         return data;
     }
 
+    /*
+     * String[] openAccount(String num, String[] data)
+     * returns updated data array
+     * takes in user PIN and initial data array
+     * Prompts user to open account and updates user file and data array.
+     */
     public static String[] openAccount(String num, String[] data) {
         // variable declaration
         boolean run = true;
@@ -186,6 +226,7 @@ public class Main {
             } while (run);
 
         } else if (checkings == "X") {
+            // checkings account is not open
             System.out.print("Open checkings account? (Y/N) ");
             choice = sc.nextLine().toLowerCase();
 
@@ -200,6 +241,7 @@ public class Main {
                         break;
 
                     case "n", "no":
+                        // exit
                         run = false;
                         break;
 
@@ -208,6 +250,7 @@ public class Main {
                 }
             } while (run);
         } else if (savings == "X") {
+            // savings account is not open
             System.out.print("Open savings account? (Y/N) ");
             choice = sc.nextLine().toLowerCase();
 
@@ -222,6 +265,7 @@ public class Main {
                         break;
 
                     case "n", "no":
+                        // exit
                         run = false;
                         break;
 
@@ -243,6 +287,12 @@ public class Main {
         return data;
     }
 
+    /*
+     * String[] closeAccount(String num, String[] data)
+     * returns updated data array
+     * takes in customer number and initial data array
+     * Prompts user to close account and updates user file and data array.
+     */
     public static String[] closeAccount(String num, String[] data) {
         // variable declaration
         boolean run = true;
@@ -261,6 +311,7 @@ public class Main {
             do {
                 switch (choice) {
                     case "1":
+                        // close checkings account
                         System.out.println("Closing checkings account...");
                         checkings = "X";
                         System.out.println("Done.");
@@ -268,6 +319,7 @@ public class Main {
                         break;
 
                     case "2":
+                        // close savings account
                         System.out.println("Closing savings account...");
                         savings = "X";
                         System.out.println("Done.");
@@ -294,6 +346,7 @@ public class Main {
                         break;
 
                     case "n", "no":
+                        // exit
                         run = false;
                         break;
 
@@ -317,6 +370,7 @@ public class Main {
                         break;
 
                     case "n", "no":
+                        // exit
                         run = false;
                         break;
 
@@ -338,6 +392,12 @@ public class Main {
         return data;
     }
 
+    /*
+     * void checkBalance(String[] data)
+     * returns void
+     * takes in data array
+     * Displays user account balances.
+     */
     public static void checkBalance(String[] data) {
         // variable declaration
         boolean run = true;
@@ -345,6 +405,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         if (checkings != "X" && savings != "X") {
+            // both accounts are open
             System.out.println("Select account to check balance:");
             System.out.println("    1. Checkings");
             System.out.println("    2. Savings");
@@ -355,11 +416,13 @@ public class Main {
             do {
                 switch (choice) {
                     case "1":
+                        // check checkings balance
                         System.out.printf("Checkings balance: $%.2f\n\n", Double.parseDouble(checkings));
                         run = false;
                         break;
 
                     case "2":
+                        // check savings balance
                         System.out.printf("Savings balance: $%.2f\n\n", Double.parseDouble(savings));
                         run = false;
                         break;
@@ -369,8 +432,10 @@ public class Main {
                 }
             } while (run);
         } else if (checkings != "X") {
+            // checkings account open
             System.out.printf("Checkings balance: $%.2f\n\n", Double.parseDouble(checkings));
         } else if (savings != "X") {
+            // savings account open
             System.out.printf("Savings balance: $%.2f\n\n", Double.parseDouble(savings));
         } else {
             // no accounts open
@@ -378,6 +443,12 @@ public class Main {
         }
     }
 
+    /*
+     * String[] updateFile(String num, String[] data)
+     * returns updated data array
+     * takes in customer number and initial data array
+     * Aids other methods in updating user file with updated data array.
+     */
     public static String[] updateFile(String num, String[] data) {
         // variable declaration
         BufferedWriter bw;
@@ -400,6 +471,12 @@ public class Main {
         return data;
     }
 
+    /*
+     * String[] deposit(String num, String[] data)
+     * returns updated data array
+     * takes in customer number and initial data array
+     * Allows user to deposit to accounts and updates data array.
+     */
     public static String[] deposit(String num, String[] data) {
         // variable declaration
         boolean run = true;
@@ -419,6 +496,7 @@ public class Main {
             do {
                 switch (choice) {
                     case "1":
+                        // deposit to checkings
                         System.out.print("Deposit amount to checkings: $");
                         deposit = sc.nextLine();
                         try {
@@ -436,6 +514,7 @@ public class Main {
                         break;
 
                     case "2":
+                        // deposit to savings
                         System.out.print("Deposit amount to savings: $");
                         deposit = sc.nextLine();
                         try {
@@ -509,6 +588,12 @@ public class Main {
         return data;
     }
 
+    /*
+     * String[] withdraw(String num, String[] data)
+     * returns updated data array
+     * takes in customer number and initial data array
+     * Allows user to withdraw from accounts and updates data array.
+     */
     public static String[] withdraw(String num, String[] data) {
         // variable declaration
         boolean run = true;
@@ -528,6 +613,7 @@ public class Main {
             do {
                 switch (choice) {
                     case "1":
+                        // withdraw from checkings
                         System.out.print("Withdraw amount from checkings: $");
                         withdrawal = sc.nextLine();
                         try {
@@ -545,6 +631,7 @@ public class Main {
                         break;
 
                     case "2":
+                        // withdraw from savings
                         System.out.print("Withdraw amount from savings: $");
                         withdrawal = sc.nextLine();
                         try {
@@ -621,6 +708,12 @@ public class Main {
         return data;
     }
 
+    /*
+     * String[] changePIN(String num, String[] data)
+     * returns updated data array
+     * takes in customer number and initial data array
+     * Allows user to change PIN and updates data array.
+     */
     public static String[] changePIN(String num, String[] data) {
         // variable declaration
         boolean run = true, input_pin = true;
@@ -736,6 +829,7 @@ public class Main {
             }
 
             while (run) {
+                // prompt for PIN
                 System.out.print("Enter PIN: ");
                 pin = sc.nextLine();
                 System.out.println();
@@ -760,7 +854,6 @@ public class Main {
                             // display menu
                             menu();
                             do {
-
                                 System.out.print("> ");
                                 choice = sc.nextLine();
                                 System.out.println();
