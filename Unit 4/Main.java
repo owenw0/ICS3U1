@@ -501,10 +501,11 @@ public class Main {
                         deposit = sc.nextLine();
                         try {
                             if (Double.parseDouble(deposit) < 0.01) {
-                                System.out.println("Please enter an amount greater than $0");
+                                System.out.println("Please enter an amount greater than $0\n");
                             } else {
                                 checkings = Double
                                         .toString(Double.parseDouble(deposit) + Double.parseDouble(checkings));
+                                System.out.printf("Checkings balance: $%.2f\n", Double.parseDouble(checkings));
                                 run = false;
                             }
                         } catch (NumberFormatException e) {
@@ -519,9 +520,10 @@ public class Main {
                         deposit = sc.nextLine();
                         try {
                             if (Double.parseDouble(deposit) < 0.01) {
-                                System.out.println("Please enter an amount greater than $0");
+                                System.out.println("Please enter an amount greater than $0\n");
                             } else {
                                 savings = Double.toString(Double.parseDouble(deposit) + Double.parseDouble(savings));
+                                System.out.printf("Savings balance: $%.2f\n", Double.parseDouble(savings));
                                 run = false;
                             }
                         } catch (NumberFormatException e) {
@@ -543,9 +545,10 @@ public class Main {
                 deposit = sc.nextLine();
                 try {
                     if (Double.parseDouble(deposit) < 0.01) {
-                        System.out.println("Please enter an amount greater than $0");
+                        System.out.println("Please enter an amount greater than $0\n");
                     } else {
                         checkings = Double.toString(Double.parseDouble(deposit) + Double.parseDouble(checkings));
+                        System.out.printf("Checkings balance: $%.2f\n", Double.parseDouble(checkings));
                         run = false;
                     }
                 } catch (NumberFormatException e) {
@@ -562,9 +565,10 @@ public class Main {
                 deposit = sc.nextLine();
                 try {
                     if (Double.parseDouble(deposit) < 0.01) {
-                        System.out.println("Please enter an amount greater than $0");
+                        System.out.println("Please enter an amount greater than $0\n");
                     } else {
                         savings = Double.toString(Double.parseDouble(deposit) + Double.parseDouble(savings));
+                        System.out.printf("Savings balance: $%.2f\n", Double.parseDouble(savings));
                         run = false;
                     }
                 } catch (NumberFormatException e) {
@@ -617,11 +621,14 @@ public class Main {
                         System.out.print("Withdraw amount from checkings: $");
                         withdrawal = sc.nextLine();
                         try {
-                            if (Double.parseDouble(checkings) < Double.parseDouble(withdrawal)) {
+                            if (Double.parseDouble(withdrawal) < 0.01) {
+                                System.out.println("Please enter an amount greater than $0");
+                            } else if (Double.parseDouble(checkings) < Double.parseDouble(withdrawal)) {
                                 System.out.println("Withdrawal amount too large.");
                             } else {
                                 checkings = Double
                                         .toString(Double.parseDouble(checkings) - Double.parseDouble(withdrawal));
+                                System.out.printf("Checkings balance: $%.2f\n", Double.parseDouble(checkings));
                             }
                             run = false;
                         } catch (NumberFormatException e) {
@@ -635,11 +642,14 @@ public class Main {
                         System.out.print("Withdraw amount from savings: $");
                         withdrawal = sc.nextLine();
                         try {
-                            if (Double.parseDouble(savings) < Double.parseDouble(withdrawal)) {
+                            if (Double.parseDouble(withdrawal) < 0.01) {
+                                System.out.println("Please enter an amount greater than $0");
+                            } else if (Double.parseDouble(savings) < Double.parseDouble(withdrawal)) {
                                 System.out.println("Withdrawal amount too large.");
                             } else {
-                                checkings = Double
+                                savings = Double
                                         .toString(Double.parseDouble(savings) - Double.parseDouble(withdrawal));
+                                System.out.printf("Savings balance: $%.2f\n", Double.parseDouble(savings));
                             }
                             run = false;
                         } catch (NumberFormatException e) {
@@ -660,11 +670,14 @@ public class Main {
                 System.out.print("Withdraw amount from checkings: $");
                 withdrawal = sc.nextLine();
                 try {
-                    if (Double.parseDouble(checkings) < Double.parseDouble(withdrawal)) {
+                    if (Double.parseDouble(withdrawal) < 0.01) {
+                        System.out.println("Please enter an amount greater than $0");
+                    } else if (Double.parseDouble(checkings) < Double.parseDouble(withdrawal)) {
                         System.out.println("Withdrawal amount too large.");
                     } else {
                         checkings = Double
                                 .toString(Double.parseDouble(checkings) - Double.parseDouble(withdrawal));
+                        System.out.printf("Checkings balance: $%.2f\n", Double.parseDouble(checkings));
                     }
                     run = false;
                 } catch (NumberFormatException e) {
@@ -680,11 +693,14 @@ public class Main {
                 System.out.print("Withdraw amount from savings: $");
                 withdrawal = sc.nextLine();
                 try {
-                    if (Double.parseDouble(savings) < Double.parseDouble(withdrawal)) {
+                    if (Double.parseDouble(withdrawal) < 0.01) {
+                        System.out.println("Please enter an amount greater than $0");
+                    } else if (Double.parseDouble(savings) < Double.parseDouble(withdrawal)) {
                         System.out.println("Withdrawal amount too large.");
                     } else {
-                        checkings = Double
+                        savings = Double
                                 .toString(Double.parseDouble(savings) - Double.parseDouble(withdrawal));
+                        System.out.printf("Savings balance: $%.2f\n", Double.parseDouble(savings));
                     }
                     run = false;
                 } catch (NumberFormatException e) {
