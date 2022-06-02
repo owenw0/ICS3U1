@@ -449,7 +449,7 @@ public class Main {
 
     /*
      * String[] updateFile(String num, String[] data)
-     * returns updated data array
+     * returns void
      * takes in customer number and initial data array
      * Aids other methods in updating user file with updated data array.
      */
