@@ -313,16 +313,18 @@ public class Main {
                     case "1":
                         // close checkings account
                         System.out.println("Closing checkings account...");
+                        System.out.printf("Checkings balance: $%.2f\n", Double.parseDouble(checkings));
                         checkings = "X";
-                        System.out.println("Done.");
+                        System.out.println("Done.\n");
                         run = false;
                         break;
 
                     case "2":
                         // close savings account
                         System.out.println("Closing savings account...");
+                        System.out.printf("Savings balance: $%.2f\n", Double.parseDouble(savings));
                         savings = "X";
-                        System.out.println("Done.");
+                        System.out.println("Done.\n");
                         run = false;
                         break;
 
@@ -340,8 +342,9 @@ public class Main {
                 switch (choice) {
                     case "y", "yes":
                         System.out.println("Closing checkings account...");
+                        System.out.printf("Checkings balance: $%.2f\n", Double.parseDouble(checkings));
                         checkings = "X";
-                        System.out.println("Done.");
+                        System.out.println("Done.\n");
                         run = false;
                         break;
 
@@ -364,8 +367,9 @@ public class Main {
                 switch (choice) {
                     case "y", "yes":
                         System.out.println("Closing savings account...");
+                        System.out.printf("Savings balance: $%.2f\n", Double.parseDouble(savings));
                         savings = "X";
-                        System.out.println("Done.");
+                        System.out.println("Done.\n");
                         run = false;
                         break;
 
