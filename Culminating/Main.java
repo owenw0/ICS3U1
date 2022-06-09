@@ -12,7 +12,9 @@ public class Main {
         }
 
         // fill P1 squares
-        for (int i = 7; i > 4; i--) {
+        for (
+
+                int i = 7; i > 4; i--) {
             if (i % 2 == 0) {
                 for (int j = 1; j < 8; j += 2)
                     board[i][j] = 'x';
@@ -72,8 +74,9 @@ public class Main {
         boolean playing = true;
         int player = 1;
         char[][] board;
+        char piece;
         String coord;
-        char[] pieceCoord = new char[2];
+        int startRow = -1, startCol = -1, endRow = -1, endCol = -1;
         boolean validCoord = false;
         Scanner sc = new Scanner(System.in);
 
@@ -87,19 +90,58 @@ public class Main {
             validCoord = false;
             // prompt current player to move
             System.out.printf("\nPlayer %d's move\n", player);
+            if (player == 1) {
+                piece = 'x';
+            } else {
+                piece = 'o';
+            }
+            // prompt for starting piece location
             while (!validCoord) {
                 System.out.print("Enter piece coordinate: ");
                 coord = sc.nextLine().toLowerCase().replaceAll("\\s+", "");
 
                 // determine if valid coord
-                if (coord.length() != 2 || coord.charAt(0) < 97 || coord.charAt(1) > 104) {
+                if (coord.length() != 2 || coord.charAt(0) < 97 || coord.charAt(0) > 104 || coord.charAt(1) < 49
+                        || coord.charAt(1) > 56) {
                     System.out.println("\nInvalid coordinate.");
                 } else {
-                    validCoord = true;
-                    pieceCoord[0] = coord.charAt(0);
-                    pieceCoord[1] = coord.charAt(1);
+                    startCol = (int) coord.charAt(0) - 97;
+                    startRow = Math.abs(((int) coord.charAt(1) - 49) - 7);
+
+                    // determine if there is a piece at given position
+                    if (board[startRow][startCol] != piece) {
+                        System.out.println("\nInvalid piece selected.");
+                    } else {
+                        validCoord = true;
+                    }
                 }
             }
+            validCoord = false;
+            // prompt for end location
+            while (!validCoord) {
+                System.out.print("Enter piece destination: ");
+                coord = sc.nextLine().toLowerCase().replaceAll("\\s+", "");
+
+                // determine if valid coord
+                if (coord.length() != 2 || coord.charAt(0) < 97 || coord.charAt(0) > 104 || coord.charAt(1) < 49
+                        || coord.charAt(1) > 56) {
+                    System.out.println("\nInvalid coordinate.");
+                } else {
+                    endCol = (int) coord.charAt(0) - 97;
+                    endRow = Math.abs(((int) coord.charAt(1) - 49) - 7);
+
+                    // determine if ending position is empty
+                    if (board[endRow][endCol] != ' ') {
+                        System.out.println("\nInvalid destination.");
+                    } else {
+                        validCoord = true;
+                    }
+                }
+            }
+            board[startRow][startCol] = ' ';
+            board[endRow][endCol] = piece;
+
+            drawBoard(board);
         }
     }
 }
