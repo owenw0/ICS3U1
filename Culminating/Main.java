@@ -89,7 +89,7 @@ public class Main {
             // reset variables
             validCoord = false;
             // prompt current player to move
-            System.out.printf("\nPlayer %d's move\n", player);
+            System.out.printf("\nPlayer %d's move\n\n", player);
             if (player == 1) {
                 piece = 'x';
             } else {
@@ -116,6 +116,7 @@ public class Main {
                     }
                 }
             }
+
             validCoord = false;
             // prompt for end location
             while (!validCoord) {
