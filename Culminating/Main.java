@@ -77,13 +77,26 @@ public class Main {
     }
 
     public static String[] addLegalMove(String[] legalMoves, String legalMove) {
-        for (int i = 0; i < legalMoves.length && i != -1; i++) {
+        // variable declaration
+        boolean complete = false;
+        for (int i = 0; i < legalMoves.length && !complete; i++) {
             if (legalMoves[i] == "") {
                 legalMoves[i] = legalMove;
+                complete = true;
             }
-            i = -1;
         }
         return legalMoves;
+    }
+
+    public static int[] coordToIndex(String coord) {
+        // variable declaration
+        int[] indexNums = new int[2];
+
+        // convert coordinate system to array index system
+        indexNums[0] = (int) coord.charAt(0) - 97; // column
+        indexNums[1] = Math.abs(((int) coord.charAt(1) - 49) - 7);
+
+        return indexNums;
     }
 
     public static void main(String[] args) {
@@ -91,7 +104,7 @@ public class Main {
         boolean playing = true;
         int player = 1;
         char[][] board;
-        char piece, startPiece = ' ';
+        char piece;
         String coord = "";
         int startRow = -1, startCol = -1, endRow = -1, endCol = -1;
         boolean validCoord = false, validStart = false;
@@ -118,7 +131,7 @@ public class Main {
             }
             // prompt for starting piece location
             while (!validCoord) {
-                do {
+                while (!validStart) {
                     System.out.print("Enter piece coordinate: ");
                     coord = sc.nextLine().toLowerCase().replaceAll("\\s+", "");
 
@@ -127,37 +140,41 @@ public class Main {
                             || coord.charAt(1) > 56) {
                         System.out.println("\nInvalid coordinate.");
                     } else {
-                        startCol = (int) coord.charAt(0) - 97;
-                        startRow = Math.abs(((int) coord.charAt(1) - 49) - 7);
+                        startCol = coordToIndex(coord)[0];
+                        startRow = coordToIndex(coord)[1];
 
                         // determine if there is a piece at given position
                         if (Character.toLowerCase(board[startRow][startCol]) != piece) {
                             System.out.println("\nInvalid piece selected.");
                         } else {
-                            startPiece = board[startRow][startCol];
                             validStart = true;
                         }
                     }
-                } while (!validStart);
+                }
 
                 // determine valid move positions
                 if (player == 1) {
                     // x move
-                    if (startPiece == 'x') {
+                    if (piece == 'x') {
                         // regular piece
-                        if (board[startRow - 1][startCol + 1] == ' ') {
-                            legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) + 1);
-                            legalMoves = addLegalMove(legalMoves, legalMove);
-                        }
-                        if (board[startRow - 1][startCol - 1] == ' ') {
-                            legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) - 1);
+                        try {
+                            if (board[startRow - 1][startCol + 1] == ' ') {
+                                legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) + 1);
+                                legalMoves = addLegalMove(legalMoves, legalMove);
+                            }
+                            if (board[startRow - 1][startCol - 1] == ' ') {
+                                legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) - 1);
+                                legalMoves = addLegalMove(legalMoves, legalMove);
+                            }
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            // leftmost or rightmost piece; ignore
                         }
                     } else {
                         // king piece
                     }
                 } else {
                     // o move
-                    if (startPiece == 'o') {
+                    if (piece == 'o') {
                         // regular piece
                     } else {
                         // king piece
