@@ -69,6 +69,17 @@ public class Main {
         System.out.println("\n");
     }
 
+    public static int[] coordToIndex(String coord) {
+        // variable declaration
+        int[] indexNums = new int[2]; // [col, row]
+
+        // convert coordinate system to array index system
+        indexNums[0] = (int) coord.charAt(0) - 97; // column
+        indexNums[1] = Math.abs(((int) coord.charAt(1) - 49) - 7); // row
+
+        return indexNums;
+    }
+
     public static String[] clearLegalMoves(String[] legalMoves) {
         for (int i = 0; i < legalMoves.length; i++) {
             legalMoves[i] = "";
@@ -83,37 +94,30 @@ public class Main {
         boolean complete = false;
 
         // determine legal moves
-        if (board[startRow - val][startCol + val] == ' ') {
-            legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) + 1);
-            for (int i = 0; i < legalMoves.length && !complete; i++) {
-                if (legalMoves[i] == "") {
-                    legalMoves[i] = legalMove;
-                    complete = true;
+        try {
+            if (board[startRow - val][startCol + val] == ' ') {
+                legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) + 1);
+                for (int i = 0; i < legalMoves.length && !complete; i++) {
+                    if (legalMoves[i] == "") {
+                        legalMoves[i] = legalMove;
+                        complete = true;
+                    }
                 }
             }
-        }
-        if (board[startRow - val][startCol - val] == ' ') {
-            legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) - 1);
-            for (int i = 0; i < legalMoves.length && !complete; i++) {
-                if (legalMoves[i] == "") {
-                    legalMoves[i] = legalMove;
-                    complete = true;
+            complete = false;
+            if (board[startRow - val][startCol - val] == ' ') {
+                legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) - 1);
+                for (int i = 0; i < legalMoves.length && !complete; i++) {
+                    if (legalMoves[i] == "") {
+                        legalMoves[i] = legalMove;
+                        complete = true;
+                    }
                 }
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
         }
 
         return legalMoves;
-    }
-
-    public static int[] coordToIndex(String coord) {
-        // variable declaration
-        int[] indexNums = new int[2]; // [col, row]
-
-        // convert coordinate system to array index system
-        indexNums[0] = (int) coord.charAt(0) - 97; // column
-        indexNums[1] = Math.abs(((int) coord.charAt(1) - 49) - 7); // row
-
-        return indexNums;
     }
 
     public static void main(String[] args) {
@@ -167,6 +171,8 @@ public class Main {
                     // determine if there is a piece at given position
                     if (Character.toLowerCase(board[startRow][startCol]) != piece) {
                         System.out.println("\nInvalid piece selected.");
+                    } else if (initLegalMoves(board, val, coord, startCol, startRow, legalMoves)[0].equals("")) {
+                        System.out.println("\nPiece has no valid moves.");
                     } else {
                         validStart = true;
                     }
@@ -176,62 +182,46 @@ public class Main {
             // determine valid move positions
             if (player == 1) {
                 // x move
-                if (piece == 'x') {
-                    // regular piece
-                    try {
-                        legalMoves = initLegalMoves(board, val, coord, startCol, startRow, legalMoves);
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        // leftmost or rightmost piece; ignore
+                if (piece == 'x') { // regular piece
+                    // display possible moves
+                    System.out.println("\nSelect from valid moves:");
+                    for (int i = 0; i < legalMoves.length && legalMoves[i] != ""; i++) {
+                        System.out.printf("%d: %s\n", i + 1, legalMoves[i]);
+                        legalMoveCount++;
                     }
 
-                    // determine if no legal moves
-                    if (legalMoves[0].equals("")) {
-                        System.out.println("Piece has no available moves.");
-                    } else {
-                        // display possible moves
-                        System.out.println("Move list: ");
-                        for (int i = 0; i < legalMoves.length && legalMoves[i] != ""; i++) {
-                            System.out.printf("%d: %s\n", i + 1, legalMoves[i]);
-                            legalMoveCount++;
+                    // prompt for move
+                    do {
+                        System.out.print("> ");
+                        move = sc.nextLine();
+                        if (move.equals("1") && legalMoveCount >= 1) {
+                            // first option
+                            endCoord = coordToIndex(legalMoves[0]);
+                            endCol = endCoord[0];
+                            endRow = endCoord[1];
+                            validMove = true;
+                        } else if (move.equals("2") && legalMoveCount >= 2) {
+                            // second option
+                            endCoord = coordToIndex(legalMoves[1]);
+                            endCol = endCoord[0];
+                            endRow = endCoord[1];
+                            validMove = true;
+                        } else if (move.equals("3") && legalMoveCount >= 3) {
+                            // third option
+                            endCoord = coordToIndex(legalMoves[2]);
+                            endCol = endCoord[0];
+                            endRow = endCoord[1];
+                            validMove = true;
+                        } else if (move.equals("4") && legalMoveCount >= 4) {
+                            // fourth option
+                            endCoord = coordToIndex(legalMoves[3]);
+                            endCol = endCoord[0];
+                            endRow = endCoord[1];
+                            validMove = true;
+                        } else {
+                            System.out.println("Invalid option.");
                         }
-
-                        // prompt for move
-                        do {
-                            System.out.print("Move selection: ");
-                            move = sc.nextLine();
-                            if (move.equals("1") && legalMoveCount >= 1) {
-                                // first option
-                                endCoord = coordToIndex(legalMoves[0]);
-                                endCol = endCoord[0];
-                                endRow = endCoord[1];
-                                validMove = true;
-                            } else if (move.equals("2") && legalMoveCount >= 2) {
-                                // second option
-                                endCoord = coordToIndex(legalMoves[1]);
-                                endCol = endCoord[0];
-                                endRow = endCoord[1];
-                                validMove = true;
-                            } else if (move.equals("3") && legalMoveCount >= 3) {
-                                // third option
-                                endCoord = coordToIndex(legalMoves[2]);
-                                endCol = endCoord[0];
-                                endRow = endCoord[1];
-                                validMove = true;
-                            } else if (move.equals("4") && legalMoveCount >= 4) {
-                                // fourth option
-                                endCoord = coordToIndex(legalMoves[3]);
-                                endCol = endCoord[0];
-                                endRow = endCoord[1];
-                                validMove = true;
-                            } else {
-                                System.out.println("Invalid option.");
-                            }
-                        } while (!validMove);
-
-                        // update board
-                        board[startCol][startRow] = ' ';
-                        board[endCol][endRow] = piece;
-                    }
+                    } while (!validMove);
                 } else {
                     // king piece
                 }
@@ -243,6 +233,7 @@ public class Main {
                     // king piece
                 }
             }
+
             board[startRow][startCol] = ' ';
             board[endRow][endCol] = piece;
 
