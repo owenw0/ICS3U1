@@ -122,19 +122,12 @@ public class Main {
 
     public static void main(String[] args) {
         // variable declaration
-        boolean playing = true;
-        int player = 1;
-        int val = 1;
+        boolean playing = true, validStart = false, validMove = false;
+        int player = 1, val = 1, startRow = 0, startCol = 0, endRow = 0, endCol = 0, legalMoveCount = 0, choice = 0;
         char[][] board;
         char piece;
-        String coord = "";
-        int startRow = -1, startCol = -1, endRow = -1, endCol = -1;
-        boolean validStart = false;
+        String coord, move;
         String[] legalMoves = new String[8];
-        String legalMove;
-        int legalMoveCount = 0;
-        String move;
-        boolean validMove = false;
         int[] endCoord = new int[2];
         Scanner sc = new Scanner(System.in);
 
@@ -191,37 +184,33 @@ public class Main {
                     }
 
                     // prompt for move
-                    do {
+                    while (!validMove) {
                         System.out.print("> ");
                         move = sc.nextLine();
                         if (move.equals("1") && legalMoveCount >= 1) {
                             // first option
-                            endCoord = coordToIndex(legalMoves[0]);
-                            endCol = endCoord[0];
-                            endRow = endCoord[1];
+                            choice = 1;
                             validMove = true;
                         } else if (move.equals("2") && legalMoveCount >= 2) {
                             // second option
-                            endCoord = coordToIndex(legalMoves[1]);
-                            endCol = endCoord[0];
-                            endRow = endCoord[1];
+                            choice = 2;
                             validMove = true;
                         } else if (move.equals("3") && legalMoveCount >= 3) {
                             // third option
-                            endCoord = coordToIndex(legalMoves[2]);
-                            endCol = endCoord[0];
-                            endRow = endCoord[1];
+                            choice = 3;
                             validMove = true;
                         } else if (move.equals("4") && legalMoveCount >= 4) {
                             // fourth option
-                            endCoord = coordToIndex(legalMoves[3]);
-                            endCol = endCoord[0];
-                            endRow = endCoord[1];
+                            choice = 4;
                             validMove = true;
                         } else {
                             System.out.println("Invalid option.");
                         }
-                    } while (!validMove);
+                    }
+                    endCoord = coordToIndex(legalMoves[choice - 1]);
+                    endCol = endCoord[0];
+                    endRow = endCoord[1];
+                    validMove = true;
                 } else {
                     // king piece
                 }
