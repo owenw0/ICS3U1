@@ -1,6 +1,9 @@
 import java.util.*;
 
 public class Main {
+    // scanner variable
+    public static Scanner sc = new Scanner(System.in);
+
     public static char[][] generateBoard() {
         char[][] board = new char[8][8];
 
@@ -12,9 +15,7 @@ public class Main {
         }
 
         // fill P1 squares
-        for (
-
-                int i = 7; i > 4; i--) {
+        for (int i = 7; i > 4; i--) {
             if (i % 2 == 0) {
                 for (int j = 1; j < 8; j += 2)
                     board[i][j] = 'x';
@@ -80,23 +81,23 @@ public class Main {
         return indexNums;
     }
 
-    public static String[] clearLegalMoves(String[] legalMoves) {
-        for (int i = 0; i < legalMoves.length; i++) {
-            legalMoves[i] = "";
-        }
-        return legalMoves;
-    }
-
     public static String[] initLegalMoves(char[][] board, int val, String coord, int startCol, int startRow,
             String[] legalMoves) {
         // variable declaration
         String legalMove;
         boolean complete = false;
 
+        // clear array
+        for (int i = 0; i < legalMoves.length; i++) {
+            legalMoves[i] = "";
+        }
+
         // determine legal moves
         try {
-            if (board[startRow - val][startCol + val] == ' ') {
-                legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) + 1);
+            // check top right of piece
+            if (board[startRow - val][startCol + 1] == ' ') {
+                // determine coord pos
+                legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) + val);
                 for (int i = 0; i < legalMoves.length && !complete; i++) {
                     if (legalMoves[i] == "") {
                         legalMoves[i] = legalMove;
@@ -104,9 +105,13 @@ public class Main {
                     }
                 }
             }
+
             complete = false;
-            if (board[startRow - val][startCol - val] == ' ') {
-                legalMove = "" + (char) (coord.charAt(0) + 1) + (char) (coord.charAt(1) - 1);
+
+            // check top left of piece
+            if (board[startRow - val][startCol - 1] == ' ') {
+                // determine coord pos
+                legalMove = "" + (char) (coord.charAt(0) - 1) + (char) (coord.charAt(1) + val);
                 for (int i = 0; i < legalMoves.length && !complete; i++) {
                     if (legalMoves[i] == "") {
                         legalMoves[i] = legalMove;
@@ -120,13 +125,12 @@ public class Main {
         return legalMoves;
     }
 
-    public static int[] movePrompt(String[] legalMoves, int legalMoveCount) {
+    public static int[] movePrompt(String[] legalMoves) {
         // variable declaration
         boolean validMove = false;
         String move;
-        int choice = -1;
-        int[] returnVal = new int[3];
-        Scanner sc = new Scanner(System.in);
+        int legalMoveCount = 0, choice = -1;
+        int[] coord = new int[2];
 
         // display possible moves
         System.out.println("\nSelect from valid moves:");
@@ -159,24 +163,20 @@ public class Main {
                 System.out.println("Invalid option.");
             }
         }
-        returnVal[0] = coordToIndex(legalMoves[choice - 1])[0];
-        returnVal[1] = coordToIndex(legalMoves[choice - 1])[1];
-        returnVal[2] = legalMoveCount;
+        coord = coordToIndex(legalMoves[choice - 1]);
 
-        sc.close();
-        return returnVal;
+        return coord;
     }
 
     public static void main(String[] args) {
         // variable declaration
         boolean playing = true, validStart = false;
-        int player = 1, val = 1, startRow = 0, startCol = 0, endRow = 0, endCol = 0, legalMoveCount = 0;
+        int player = 1, val = 1, startRow = 0, startCol = 0, endRow = 0, endCol = 0;
         char[][] board;
-        char piece;
+        char piece = 'x';
         String coord;
         String[] legalMoves = new String[8];
         int[] returnVal;
-        Scanner sc = new Scanner(System.in);
 
         // init board
         board = generateBoard();
@@ -186,15 +186,10 @@ public class Main {
         while (playing) {
             // reset variables
             validStart = false;
-            legalMoveCount = 0;
-            legalMoves = clearLegalMoves(legalMoves);
+
             // prompt current player to move
             System.out.printf("Player %d's move\n", player);
-            if (player == 1) {
-                piece = 'x';
-            } else {
-                piece = 'o';
-            }
+
             // prompt for starting piece location
             while (!validStart) {
                 System.out.print("Enter piece coordinate: ");
@@ -220,24 +215,24 @@ public class Main {
             }
 
             // determine valid move positions
-            returnVal = movePrompt(legalMoves, legalMoveCount);
+            returnVal = movePrompt(legalMoves);
             endCol = returnVal[0];
             endRow = returnVal[1];
 
             board[startRow][startCol] = ' ';
             board[endRow][endCol] = piece;
-
             drawBoard(board);
 
             // switch player
             if (player == 1) {
                 player = 2;
                 val = -1;
+                piece = 'o';
             } else {
                 player = 1;
                 val = 1;
+                piece = 'x';
             }
         }
-        sc.close();
     }
 }
