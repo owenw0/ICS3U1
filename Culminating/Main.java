@@ -120,15 +120,62 @@ public class Main {
         return legalMoves;
     }
 
+    public static int[] movePrompt(String[] legalMoves, int legalMoveCount) {
+        // variable declaration
+        boolean validMove = false;
+        String move;
+        int choice = -1;
+        int[] returnVal = new int[3];
+        Scanner sc = new Scanner(System.in);
+
+        // display possible moves
+        System.out.println("\nSelect from valid moves:");
+        for (int i = 0; i < legalMoves.length && legalMoves[i] != ""; i++) {
+            System.out.printf("%d: %s\n", i + 1, legalMoves[i]);
+            legalMoveCount++;
+        }
+
+        // prompt for move
+        while (!validMove) {
+            System.out.print("> ");
+            move = sc.nextLine();
+            if (move.equals("1") && legalMoveCount >= 1) {
+                // first option
+                choice = 1;
+                validMove = true;
+            } else if (move.equals("2") && legalMoveCount >= 2) {
+                // second option
+                choice = 2;
+                validMove = true;
+            } else if (move.equals("3") && legalMoveCount >= 3) {
+                // third option
+                choice = 3;
+                validMove = true;
+            } else if (move.equals("4") && legalMoveCount >= 4) {
+                // fourth option
+                choice = 4;
+                validMove = true;
+            } else {
+                System.out.println("Invalid option.");
+            }
+        }
+        returnVal[0] = coordToIndex(legalMoves[choice - 1])[0];
+        returnVal[1] = coordToIndex(legalMoves[choice - 1])[1];
+        returnVal[2] = legalMoveCount;
+
+        sc.close();
+        return returnVal;
+    }
+
     public static void main(String[] args) {
         // variable declaration
-        boolean playing = true, validStart = false, validMove = false;
-        int player = 1, val = 1, startRow = 0, startCol = 0, endRow = 0, endCol = 0, legalMoveCount = 0, choice = 0;
+        boolean playing = true, validStart = false;
+        int player = 1, val = 1, startRow = 0, startCol = 0, endRow = 0, endCol = 0, legalMoveCount = 0;
         char[][] board;
         char piece;
-        String coord, move;
+        String coord;
         String[] legalMoves = new String[8];
-        int[] endCoord = new int[2];
+        int[] returnVal;
         Scanner sc = new Scanner(System.in);
 
         // init board
@@ -173,55 +220,9 @@ public class Main {
             }
 
             // determine valid move positions
-            if (player == 1) {
-                // x move
-                if (piece == 'x') { // regular piece
-                    // display possible moves
-                    System.out.println("\nSelect from valid moves:");
-                    for (int i = 0; i < legalMoves.length && legalMoves[i] != ""; i++) {
-                        System.out.printf("%d: %s\n", i + 1, legalMoves[i]);
-                        legalMoveCount++;
-                    }
-
-                    // prompt for move
-                    while (!validMove) {
-                        System.out.print("> ");
-                        move = sc.nextLine();
-                        if (move.equals("1") && legalMoveCount >= 1) {
-                            // first option
-                            choice = 1;
-                            validMove = true;
-                        } else if (move.equals("2") && legalMoveCount >= 2) {
-                            // second option
-                            choice = 2;
-                            validMove = true;
-                        } else if (move.equals("3") && legalMoveCount >= 3) {
-                            // third option
-                            choice = 3;
-                            validMove = true;
-                        } else if (move.equals("4") && legalMoveCount >= 4) {
-                            // fourth option
-                            choice = 4;
-                            validMove = true;
-                        } else {
-                            System.out.println("Invalid option.");
-                        }
-                    }
-                    endCoord = coordToIndex(legalMoves[choice - 1]);
-                    endCol = endCoord[0];
-                    endRow = endCoord[1];
-                    validMove = true;
-                } else {
-                    // king piece
-                }
-            } else {
-                // o move
-                if (piece == 'o') {
-                    // regular piece
-                } else {
-                    // king piece
-                }
-            }
+            returnVal = movePrompt(legalMoves, legalMoveCount);
+            endCol = returnVal[0];
+            endRow = returnVal[1];
 
             board[startRow][startCol] = ' ';
             board[endRow][endCol] = piece;
@@ -237,5 +238,6 @@ public class Main {
                 val = 1;
             }
         }
+        sc.close();
     }
 }

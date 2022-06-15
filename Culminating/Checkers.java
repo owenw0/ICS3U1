@@ -245,6 +245,7 @@ public class Checkers {
                 break;
             }
         } // end of the game!
+        in.close();
     }
 
 }
