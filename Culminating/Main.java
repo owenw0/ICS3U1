@@ -171,7 +171,7 @@ public class Main {
     public static void main(String[] args) {
         // variable declaration
         boolean playing = true, validStart = false;
-        int player = 1, val = 1, startRow = 0, startCol = 0, endRow = 0, endCol = 0;
+        int player = 1, val = 1, startRow = -1, startCol = -1, endRow, endCol;
         char[][] board;
         char piece = 'x';
         String coord;
@@ -191,7 +191,7 @@ public class Main {
             System.out.printf("Player %d's move\n", player);
 
             // prompt for starting piece location
-            while (!validStart) {
+            do {
                 System.out.print("Enter piece coordinate: ");
                 coord = sc.nextLine().toLowerCase().replaceAll("\\s+", "");
 
@@ -212,7 +212,7 @@ public class Main {
                         validStart = true;
                     }
                 }
-            }
+            } while (!validStart);
 
             // determine valid move positions
             returnVal = movePrompt(legalMoves);
