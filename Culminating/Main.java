@@ -229,8 +229,7 @@ public class Main {
                 val = -1;
                 piece = 'o';
             } else {
-                player = 1;
-                val = 1;
+                player = val = 1;
                 piece = 'x';
             }
         }
