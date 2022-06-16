@@ -170,22 +170,43 @@ public class Main {
 
     public static void main(String[] args) {
         // variable declaration
-        boolean playing = true, validStart = false;
-        int player = 1, val = 1, startRow = -1, startCol = -1, endRow, endCol;
-        char[][] board;
+        boolean run = true, playing = false;
+        int player = 1, val = 1, startRow = -1, startCol = -1, endRow, endCol, turns = 0;
+        char[][] board = new char[8][8];
         char piece = 'x';
-        String coord;
+        String playerCount, coord;
         String[] legalMoves = new String[8];
         int[] returnVal;
 
-        // init board
-        board = generateBoard();
-        drawBoard(board);
+        // prompt for player count
+        do {
+            System.out.print("How many players are there? (1/2)\n> ");
+            playerCount = sc.nextLine().replaceAll("\\s+", "");
+
+            switch (playerCount) {
+                case "1":
+                    System.out.println("AI is not available.\n");
+                    run = false;
+                    break;
+
+                case "2":
+                    playing = true;
+                    run = false;
+
+                    // init board
+                    board = generateBoard();
+                    drawBoard(board);
+                    break;
+
+                default:
+                    System.out.println("Invalid option.\n");
+            }
+        } while (run);
 
         // main loop
         while (playing) {
             // reset variables
-            validStart = false;
+            run = true;
 
             // prompt current player to move
             System.out.printf("Player %d's move\n", player);
@@ -209,10 +230,10 @@ public class Main {
                     } else if (initLegalMoves(board, val, coord, startCol, startRow, legalMoves)[0].equals("")) {
                         System.out.println("\nPiece has no valid moves.");
                     } else {
-                        validStart = true;
+                        run = false;
                     }
                 }
-            } while (!validStart);
+            } while (run);
 
             // determine valid move positions
             returnVal = movePrompt(legalMoves);
@@ -222,6 +243,7 @@ public class Main {
             board[startRow][startCol] = ' ';
             board[endRow][endCol] = piece;
             drawBoard(board);
+            turns++;
 
             // switch player
             if (player == 1) {
