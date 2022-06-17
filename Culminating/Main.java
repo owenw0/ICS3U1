@@ -170,7 +170,7 @@ public class Main {
 
     public static void main(String[] args) {
         // variable declaration
-        boolean run = true, playing = false;
+        boolean run = true, onePlayer = false, twoPlayer = false;
         int player = 1, val = 1, startRow = -1, startCol = -1, endRow, endCol, turns = 0;
         char[][] board = new char[8][8];
         char piece = 'x';
@@ -185,12 +185,12 @@ public class Main {
 
             switch (playerCount) {
                 case "1":
-                    System.out.println("AI is not available.\n");
+                    onePlayer = true;
                     run = false;
                     break;
 
                 case "2":
-                    playing = true;
+                    twoPlayer = true;
                     run = false;
 
                     // init board
@@ -203,8 +203,14 @@ public class Main {
             }
         } while (run);
 
-        // main loop
-        while (playing) {
+        // vs AI
+        while (onePlayer) {
+            System.out.println("\nAI is not available.");
+            onePlayer = false;
+        }
+
+        // pvp
+        while (twoPlayer) {
             // reset variables
             run = true;
 
