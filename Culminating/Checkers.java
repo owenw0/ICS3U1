@@ -83,129 +83,147 @@ public class Checkers {
 
     public static String[][] initLegalCaptures(char[][] board, char piece, String coord, int[] startCoord) {
         // variable declaration
-        String[][] legalCaptures = new String[4][2];
+        String[][] legalCaptures = new String[2][2];
         String legalCapture, legalMove;
         char oppPiece;
-        boolean king = false, complete = false;
-        int val, startCol = startCoord[0], startRow = startCoord[1];
+        boolean complete = false;
+        int val, val1 = 1, startCol = startCoord[0], startRow = startCoord[1];
 
         // determine piece values
         if (Character.toLowerCase(piece) == 'x') {
             if (piece == 'X') {
-                king = true;
+                legalCaptures = new String[4][2];
+                val1++;
             }
             val = 1;
             oppPiece = 'o';
         } else {
             if (piece == 'O') {
-                king = true;
+                legalCaptures = new String[4][2];
+                val1++;
             }
             val = -1;
             oppPiece = 'x';
         }
 
         // determine possible captures
-        for (int i = 0; i <= 1; i += 2) {
-            try {
-                if (Character.toLowerCase(board[startRow - val][startCol + i]) == oppPiece
-                        && board[startRow - (val * 2)][startCol + 2 * i] == ' ') {
-                    // available jump
-                    legalCapture = "" + (char) (coord.charAt(0) + i) + (char) (coord.charAt(1) + val);
-                    legalMove = "" + (char) (coord.charAt(0) + i * 2) + (char) (coord.charAt(1) + val * 2);
-                    for (int j = 0; j < legalCaptures.length && !complete; j++) {
-                        legalCaptures[j][0] = legalCapture;
-                        legalCaptures[j][1] = legalMove;
-                        complete = true;
+        for (int i = 0; i < val1; i++) {
+            // check right and left of piece
+            for (int j = -1; j <= 1; j += 2) {
+                try {
+                    if (Character.toLowerCase(board[startRow - val][startCol + j]) == oppPiece
+                            && board[startRow - val * 2][startCol + 2 * j] == ' ') {
+                        // available jump
+                        legalCapture = "" + (char) (coord.charAt(0) + j) + (char) (coord.charAt(1) + val);
+                        legalMove = "" + (char) (coord.charAt(0) + j * 2) + (char) (coord.charAt(1) + val * 2);
+                        for (int k = 0; k < legalCaptures.length && !complete; k++) {
+                            if (legalCaptures[k] == null) {
+                                legalCaptures[k][0] = legalCapture;
+                                legalCaptures[k][1] = legalMove;
+                                complete = true;
+                            }
+                        }
                     }
+                } catch (ArrayIndexOutOfBoundsException e) {
                 }
-            } catch (ArrayIndexOutOfBoundsException e) {
             }
+            val = (Math.abs(val) + 1) * val;
         }
-
         return legalCaptures;
     }
 
     public static String[] initLegalMoves(char[][] board, char piece, String coord, int[] startCoord) {
         // variable declaration
-        String[] legalMoves = new String[4];
+        String[] legalMoves = new String[2];
         String legalMove;
-        boolean king = false, complete = false;
-        int val, startCol = startCoord[0], startRow = startCoord[1];
+        boolean complete = false;
+        int val, val1 = 1, startCol = startCoord[0], startRow = startCoord[1];
 
         // determine piece values
         if (Character.toLowerCase(piece) == 'x') {
             if (piece == 'X') {
-                king = true;
+                legalMoves = new String[4];
+                val1++;
             }
             val = 1;
         } else {
             if (piece == 'O') {
-                king = true;
+                legalMoves = new String[4];
+                val1++;
             }
             val = -1;
         }
 
         // determine possible moves
-        try {
-            for (int i = -1; i <= 1; i += 2) {
-                if (board[startRow - val][startCol + i] == ' ') {
-                    // determine coord pos
-                    legalMove = "" + (char) (coord.charAt(0) + i) + (char) (coord.charAt(1) + val);
-                    for (int j = 0; j < legalMoves.length && !complete; j++) {
-                        if (legalMoves[j] == "") {
-                            legalMoves[j] = legalMove;
-                            complete = true;
+        for (int i = 0; i < val1; i++) {
+            // check right and left of piece
+            for (int j = -1; j <= 1; j += 2) {
+                try {
+                    if (board[startRow - val][startCol + j] == ' ') {
+                        // determine coord pos
+                        legalMove = "" + (char) (coord.charAt(0) + j) + (char) (coord.charAt(1) + val);
+                        for (int k = 0; k < legalMoves.length && !complete; k++) {
+                            if (legalMoves[k] == null) {
+                                legalMoves[k] = legalMove;
+                                complete = true;
+                            }
                         }
                     }
+                } catch (ArrayIndexOutOfBoundsException e) {
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
+            val = (Math.abs(val) + 1) * val;
         }
-
         return legalMoves;
     }
 
-    public static int[] movePrompt(String[] legalMoves) {
+    public static int[] movePrompt(String[][] legalCaptures, String[] legalMoves) {
         // variable declaration
         boolean validMove = false;
         String move;
-        int legalMoveCount = 0, choice = -1;
-        int[] coord = new int[2];
+        int counter = 1, legalCount, legalCaptureCount = 0, legalMoveCount = 0, choice = -1;
+
+        System.out.println("\nSelect from valid moves:");
+
+        // display possible captures
+        for (int i = 0; i < legalCaptures.length && legalCaptures[i][0] != null; i++) {
+            System.out.printf("%d: x%s, %s\n", counter, legalCaptures[i][0], legalCaptures[i][1]);
+            legalCaptureCount++;
+            counter++;
+        }
 
         // display possible moves
-        System.out.println("\nSelect from valid moves:");
-        for (int i = 0; i < legalMoves.length && legalMoves[i] != ""; i++) {
-            System.out.printf("%d: %s\n", i + 1, legalMoves[i]);
+        for (int i = 0; i < legalMoves.length && legalMoves[i] != null; i++) {
+            System.out.printf("%d: %s\n", counter, legalMoves[i]);
             legalMoveCount++;
+            counter++;
         }
+
+        legalCount = legalCaptureCount + legalMoveCount;
 
         // prompt for move
         while (!validMove) {
             System.out.print("> ");
             move = sc.nextLine();
-            if (move.equals("1") && legalMoveCount >= 1) {
-                // first option
-                choice = 1;
-                validMove = true;
-            } else if (move.equals("2") && legalMoveCount >= 2) {
-                // second option
-                choice = 2;
-                validMove = true;
-            } else if (move.equals("3") && legalMoveCount >= 3) {
-                // third option
-                choice = 3;
-                validMove = true;
-            } else if (move.equals("4") && legalMoveCount >= 4) {
-                // fourth option
-                choice = 4;
-                validMove = true;
-            } else {
+
+            for (int i = 1; i <= 4 && !validMove; i++) {
+                if (move.equals(Integer.toString(i)) && legalCount >= i) {
+                    choice = i;
+                    validMove = true;
+                }
+            }
+            if (!validMove) {
                 System.out.println("Invalid option.");
             }
         }
-        coord = coordToIndex(legalMoves[choice - 1]);
 
-        return coord;
+        if (legalCaptureCount < choice) {
+            // chose to move
+            return coordToIndex(legalMoves[legalMoveCount - legalCaptureCount - 1]);
+        } else {
+            // chose to capture
+            return coordToIndex(legalCaptures[choice - 1][1]);
+        }
     }
 
     public static void main(String[] args) {
@@ -217,7 +235,7 @@ public class Checkers {
         String playerCount, coord;
         String[][] legalCaptures;
         String[] legalMoves;
-        int[] startCoord = new int[2], returnVal;
+        int[] startCoord = new int[2], returnCoord;
 
         // prompt for player count
         do {
@@ -275,8 +293,8 @@ public class Checkers {
                     // determine if there is a piece at given position
                     if (Character.toLowerCase(board[startRow][startCol]) != piece) {
                         System.out.println("\nInvalid piece selected.");
-                    } else if (initLegalCaptures(board, piece, coord, startCoord)[0][0] == ""
-                            && initLegalMoves(board, piece, coord, startCoord)[0].equals("")) {
+                    } else if (initLegalCaptures(board, piece, coord, startCoord)[0][0] == null
+                            && initLegalMoves(board, piece, coord, startCoord)[0] == null) {
                         System.out.println("\nPiece has no valid moves.");
                     } else {
                         run = false;
@@ -287,9 +305,10 @@ public class Checkers {
             // determine valid move positions
             legalCaptures = initLegalCaptures(board, piece, coord, startCoord);
             legalMoves = initLegalMoves(board, piece, coord, startCoord);
-            returnVal = movePrompt(legalMoves);
-            endCol = returnVal[0];
-            endRow = returnVal[1];
+
+            returnCoord = movePrompt(legalCaptures, legalMoves);
+            endCol = returnCoord[0];
+            endRow = returnCoord[1];
 
             board[startRow][startCol] = ' ';
             board[endRow][endCol] = piece;
