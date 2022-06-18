@@ -241,10 +241,10 @@ public class Checkers {
 
     public static void main(String[] args) {
         // variable declaration
-        boolean run = true, onePlayer = false, twoPlayer = false;
+        boolean run = true, onePlayer = false, twoPlayer = false, win = true;
         int player = 1, startRow = -1, startCol = -1, turns = 0;
         char[][] board = new char[8][8];
-        char piece = 'x';
+        char piece = 'x', oppPiece = 'o';
         String playerCount, coord;
         int[] startCoord = new int[2];
 
@@ -319,13 +319,28 @@ public class Checkers {
             turns++;
             drawBoard(board);
 
+            // determine if game has been won
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board.length && win; j++) {
+                    if (board[i][j] == oppPiece) {
+                        win = false;
+                    }
+                }
+            }
+            if (win) {
+                System.out.printf("Player %d has won!\n", player);
+                twoPlayer = false;
+            }
+
             // switch player
             if (player == 1) {
                 player = 2;
                 piece = 'o';
+                oppPiece = 'x';
             } else {
                 player = 1;
                 piece = 'x';
+                oppPiece = 'o';
             }
         }
         System.out.printf("Game lasted %d turns\n", turns);
