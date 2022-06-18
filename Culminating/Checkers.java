@@ -1,302 +1,310 @@
 import java.util.*;
 
 public class Checkers {
-    public static char board[][] = new char[8][8];
+    // scanner variable
+    public static Scanner sc = new Scanner(System.in);
 
-    public static void drawBoard() {
-        for (int i = 1; i < 9; ++i) {
-            System.out.print("   " + i);
+    public static char[][] generateBoard() {
+        char[][] board = new char[8][8];
+
+        // fill empty squares
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                board[i][j] = ' ';
+            }
         }
+
+        // fill P1 squares
+        for (int i = 7; i > 4; i--) {
+            if (i % 2 == 0) {
+                for (int j = 1; j < 8; j += 2)
+                    board[i][j] = 'x';
+            } else {
+                for (int j = 0; j < 8; j += 2)
+                    board[i][j] = 'x';
+            }
+        }
+
+        // fill P2 squares
+        for (int i = 0; i < 3; i++) {
+            if (i % 2 == 0) {
+                for (int j = 1; j < 8; j += 2)
+                    board[i][j] = 'o';
+            } else {
+                for (int j = 0; j < 8; j += 2)
+                    board[i][j] = 'o';
+            }
+        }
+        return board;
+    }
+
+    public static void drawBoard(char[][] board) {
+        // print board borders
         System.out.print("\n  ");
-        for (int i = 0; i < 8; ++i)
+        for (int i = 0; i < 8; i++) {
             System.out.print("+---");
+        }
         System.out.print("+\n");
-        for (int i = 0; i < 8; ++i) {
-            System.out.print((i + 1) + " ");
-            for (int j = 0; j < 8; ++j) {
+
+        // print board content
+        for (int i = 0; i < 8; i++) {
+            // print board y coordinate
+            System.out.print(Math.abs(8 - i) + " ");
+            // print piece on each square
+            for (int j = 0; j < 8; j++) {
                 System.out.print("| " + board[i][j] + " ");
             }
+            // print board borders
             System.out.print("|\n  ");
-            for (int i2 = 0; i2 < 8; ++i2)
+            for (int k = 0; k < 8; k++) {
                 System.out.print("+---");
+            }
             System.out.print("+\n");
         }
+
+        System.out.print(" ");
+        // print board x coordinates
+        for (int i = 97; i <= 104; i++) {
+            System.out.print("   " + (char) i);
+        }
+        System.out.println("\n");
+    }
+
+    public static int[] coordToIndex(String coord) {
+        // variable declaration
+        int[] indexNums = new int[2]; // [col, row]
+
+        // convert coordinate system to array index system
+        indexNums[0] = (int) coord.charAt(0) - 97; // column
+        indexNums[1] = Math.abs(((int) coord.charAt(1) - 49) - 7); // row
+
+        return indexNums;
+    }
+
+    public static String[][] initLegalCaptures(char[][] board, char piece, String coord, int[] startCoord) {
+        // variable declaration
+        String[][] legalCaptures = new String[4][2];
+        String legalCapture, legalMove;
+        char oppPiece;
+        boolean king = false, complete = false;
+        int val, startCol = startCoord[0], startRow = startCoord[1];
+
+        // determine piece values
+        if (Character.toLowerCase(piece) == 'x') {
+            if (piece == 'X') {
+                king = true;
+            }
+            val = 1;
+            oppPiece = 'o';
+        } else {
+            if (piece == 'O') {
+                king = true;
+            }
+            val = -1;
+            oppPiece = 'x';
+        }
+
+        // determine possible captures
+        for (int i = 0; i <= 1; i += 2) {
+            try {
+                if (Character.toLowerCase(board[startRow - val][startCol + i]) == oppPiece
+                        && board[startRow - (val * 2)][startCol + 2 * i] == ' ') {
+                    // available jump
+                    legalCapture = "" + (char) (coord.charAt(0) + i) + (char) (coord.charAt(1) + val);
+                    legalMove = "" + (char) (coord.charAt(0) + i * 2) + (char) (coord.charAt(1) + val * 2);
+                    for (int j = 0; j < legalCaptures.length && !complete; j++) {
+                        legalCaptures[j][0] = legalCapture;
+                        legalCaptures[j][1] = legalMove;
+                        complete = true;
+                    }
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+            }
+        }
+
+        return legalCaptures;
+    }
+
+    public static String[] initLegalMoves(char[][] board, char piece, String coord, int[] startCoord) {
+        // variable declaration
+        String[] legalMoves = new String[4];
+        String legalMove;
+        boolean king = false, complete = false;
+        int val, startCol = startCoord[0], startRow = startCoord[1];
+
+        // determine piece values
+        if (Character.toLowerCase(piece) == 'x') {
+            if (piece == 'X') {
+                king = true;
+            }
+            val = 1;
+        } else {
+            if (piece == 'O') {
+                king = true;
+            }
+            val = -1;
+        }
+
+        // determine possible moves
+        try {
+            for (int i = -1; i <= 1; i += 2) {
+                if (board[startRow - val][startCol + i] == ' ') {
+                    // determine coord pos
+                    legalMove = "" + (char) (coord.charAt(0) + i) + (char) (coord.charAt(1) + val);
+                    for (int j = 0; j < legalMoves.length && !complete; j++) {
+                        if (legalMoves[j] == "") {
+                            legalMoves[j] = legalMove;
+                            complete = true;
+                        }
+                    }
+                }
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+
+        return legalMoves;
+    }
+
+    public static int[] movePrompt(String[] legalMoves) {
+        // variable declaration
+        boolean validMove = false;
+        String move;
+        int legalMoveCount = 0, choice = -1;
+        int[] coord = new int[2];
+
+        // display possible moves
+        System.out.println("\nSelect from valid moves:");
+        for (int i = 0; i < legalMoves.length && legalMoves[i] != ""; i++) {
+            System.out.printf("%d: %s\n", i + 1, legalMoves[i]);
+            legalMoveCount++;
+        }
+
+        // prompt for move
+        while (!validMove) {
+            System.out.print("> ");
+            move = sc.nextLine();
+            if (move.equals("1") && legalMoveCount >= 1) {
+                // first option
+                choice = 1;
+                validMove = true;
+            } else if (move.equals("2") && legalMoveCount >= 2) {
+                // second option
+                choice = 2;
+                validMove = true;
+            } else if (move.equals("3") && legalMoveCount >= 3) {
+                // third option
+                choice = 3;
+                validMove = true;
+            } else if (move.equals("4") && legalMoveCount >= 4) {
+                // fourth option
+                choice = 4;
+                validMove = true;
+            } else {
+                System.out.println("Invalid option.");
+            }
+        }
+        coord = coordToIndex(legalMoves[choice - 1]);
+
+        return coord;
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 8; ++i)
-            for (int j = 0; j < 8; ++j)
-                board[i][j] = ' ';
-        for (int i = 0; i < 3; ++i) {
-            if (i % 2 == 0) {
-                for (int j = 1; j < 8; j += 2)
-                    board[i][j] = 'x';
-            } else {
-                for (int j = 0; j < 8; j += 2)
-                    board[i][j] = 'x';
-            }
-        }
-        for (int i = 7; i > 4; --i) {
-            if (i % 2 == 0) {
-                for (int j = 1; j < 8; j += 2)
-                    board[i][j] = 'o';
-            } else {
-                for (int j = 0; j < 8; j += 2)
-                    board[i][j] = 'o';
-            }
-        }
-        drawBoard();
-        int user = 0;
-        Scanner in = new Scanner(System.in);
-        while (true) { // This loop ends when the game has been finished
-            if (user == 0)
-                user = 1; // Chages the player
-            else
-                user = 0;
-            int sw = 0, once = 1, row1 = 0, col1 = 0; // ONCE=0 -> User should move on force | ONCE=1 -> user should
-                                                      // insert columns
-            while (sw == 0) // This loop ends when the player entered valid numbers
-            {
-                ArrayList<Path> cellsMustGo = new ArrayList<>();
-                sw = 1;
-                for (int i = 0; i < 8; ++i) {
-                    for (int j = 0; j < 8; ++j) {
-                        if (once == 0) {
-                            i = row1;
-                            j = col1;
-                        }
-                        Cell now = new Cell(i, j);
-                        if (user == 0 && board[i][j] == 'x') {
-                            if (i < 6 && j > 1 && (board[i + 1][j - 1] == 'o' || board[i + 1][j - 1] == 'O')
-                                    && board[i + 2][j - 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i + 2, j - 2)));
-                                sw = 0;
-                            }
-                            if (i < 6 && j < 6 && (board[i + 1][j + 1] == 'o' || board[i + 1][j + 1] == 'O')
-                                    && board[i + 2][j + 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i + 2, j + 2)));
-                                sw = 0;
-                            }
-                        } else if (user == 1 && board[i][j] == 'o') {
-                            if (i > 1 && j > 1 && (board[i - 1][j - 1] == 'x' || board[i - 1][j - 1] == 'X')
-                                    && board[i - 2][j - 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i - 2, j - 2)));
-                                sw = 0;
-                            }
-                            if (i > 1 && j < 6 && (board[i - 1][j + 1] == 'x' || board[i - 1][j + 1] == 'X')
-                                    && board[i - 2][j + 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i - 2, j + 2)));
-                                sw = 0;
-                            }
-                        } else if (user == 0 && board[i][j] == 'X') // when user 1 wants to move its king
-                        {
-                            if (i > 1 && j > 1 && (board[i - 1][j - 1] == 'o' || board[i - 1][j - 1] == 'O')
-                                    && board[i - 2][j - 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i - 2, j - 2)));
-                                sw = 0;
-                            }
-                            if (i > 1 && j < 6 && (board[i - 1][j + 1] == 'o' || board[i - 1][j + 1] == 'O')
-                                    && board[i - 2][j + 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i - 2, j + 2)));
-                                sw = 0;
-                            }
-                            if (i < 6 && j > 1 && (board[i + 1][j - 1] == 'o' || board[i + 1][j - 1] == 'O')
-                                    && board[i + 2][j - 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i + 2, j - 2)));
-                                sw = 0;
-                            }
-                            if (i < 6 && j < 6 && (board[i + 1][j + 1] == 'o' || board[i + 1][j + 1] == 'O')
-                                    && board[i + 2][j + 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i + 2, j + 2)));
-                                sw = 0;
-                            }
-                        } else if (user == 1 && board[i][j] == 'O') // when user O wants to move its king
-                        {
-                            if (i > 1 && j > 1 && (board[i - 1][j - 1] == 'x' || board[i - 1][j - 1] == 'X')
-                                    && board[i - 2][j - 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i - 2, j - 2)));
-                                sw = 0;
-                            }
-                            if (i > 1 && j < 6 && (board[i - 1][j + 1] == 'x' || board[i - 1][j + 1] == 'X')
-                                    && board[i - 2][j + 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i - 2, j + 2)));
-                                sw = 0;
-                            }
-                            if (i < 6 && j > 1 && (board[i + 1][j - 1] == 'x' || board[i + 1][j - 1] == 'X')
-                                    && board[i + 2][j - 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i + 2, j - 2)));
-                                sw = 0;
-                            }
-                            if (i < 6 && j < 6 && (board[i + 1][j + 1] == 'x' || board[i + 1][j + 1] == 'X')
-                                    && board[i + 2][j + 2] == ' ') {
-                                cellsMustGo.add(new Path(now, new Cell(i + 2, j + 2)));
-                                sw = 0;
-                            }
-                        }
-                        if (once == 0)
-                            break;
-                    } // end j loop
-                    if (once == 0)
-                        break;
-                } // end i loop
+        // variable declaration
+        boolean run = true, onePlayer = false, twoPlayer = false;
+        int player = 1, startRow = -1, startCol = -1, endRow, endCol, turns = 0;
+        char[][] board = new char[8][8];
+        char piece = 'x';
+        String playerCount, coord;
+        String[][] legalCaptures;
+        String[] legalMoves;
+        int[] startCoord = new int[2], returnVal;
 
-                if (sw == 1) {
+        // prompt for player count
+        do {
+            System.out.print("How many players are there? (1/2)\n> ");
+            playerCount = sc.nextLine().replaceAll("\\s+", "");
+
+            switch (playerCount) {
+                case "1":
+                    onePlayer = true;
+                    run = false;
                     break;
+
+                case "2":
+                    twoPlayer = true;
+                    run = false;
+
+                    // init board
+                    board = generateBoard();
+                    drawBoard(board);
+                    break;
+
+                default:
+                    System.out.println("Invalid option.\n");
+            }
+        } while (run);
+
+        // vs AI
+        while (onePlayer) {
+            System.out.println("\nAI is not available.");
+            onePlayer = false;
+        }
+
+        // pvp
+        while (twoPlayer) {
+            // reset variables
+            run = true;
+
+            // prompt current player to move
+            System.out.printf("Player %d's move\n", player);
+
+            // prompt for starting piece location
+            do {
+                System.out.print("Enter piece coordinate: ");
+                coord = sc.nextLine().toLowerCase().replaceAll("\\s+", "");
+
+                // determine if valid coord
+                if (coord.length() != 2 || coord.charAt(0) < 97 || coord.charAt(0) > 104 || coord.charAt(1) < 49
+                        || coord.charAt(1) > 56) {
+                    System.out.println("\nInvalid coordinate.");
                 } else {
-                    System.out.print("User " + (user + 1)
-                            + " please choose one of the cell(s) that show below for next move : \n");
-                    int it = 1;
-                    for (Path p : cellsMustGo) {
-                        System.out.println(it + ". " + (p.getStart().getRow() + 1) + "|" + (p.getStart().getCol() + 1)
-                                + " to " + (p.getEnd().getRow() + 1) + "|" + (p.getEnd().getCol() + 1));
-                        it++;
+                    startCoord = coordToIndex(coord);
+                    startCol = startCoord[0];
+                    startRow = startCoord[1];
+
+                    // determine if there is a piece at given position
+                    if (Character.toLowerCase(board[startRow][startCol]) != piece) {
+                        System.out.println("\nInvalid piece selected.");
+                    } else if (initLegalCaptures(board, piece, coord, startCoord)[0][0] == ""
+                            && initLegalMoves(board, piece, coord, startCoord)[0].equals("")) {
+                        System.out.println("\nPiece has no valid moves.");
+                    } else {
+                        run = false;
                     }
-                    int tmp = in.nextInt();
-                    row1 = cellsMustGo.get(tmp - 1).getEnd().getRow();
-                    col1 = cellsMustGo.get(tmp - 1).getEnd().getCol();
-                    board[row1][col1] = board[cellsMustGo.get(tmp - 1).getStart().getRow()][cellsMustGo.get(tmp - 1)
-                            .getStart().getCol()];
-                    board[cellsMustGo.get(tmp - 1).getStart().getRow()][cellsMustGo.get(tmp - 1).getStart()
-                            .getCol()] = ' ';
-                    int newRow = (cellsMustGo.get(tmp - 1).getStart().getRow() + row1) / 2;
-                    int newCol = (cellsMustGo.get(tmp - 1).getStart().getCol() + col1) / 2;
-                    if (user == 0 && row1 == 7 && board[row1][col1] == 'x')
-                        board[row1][col1] = 'X'; // user 1 became king
-                    if (user == 1 && row1 == 0 && board[row1][col1] == 'o')
-                        board[row1][col1] = 'O'; // user 2 became king
-                    board[newRow][newCol] = ' ';
-                    once = 0;
                 }
-                drawBoard();
-            } // end while1 loop
-            if (once == 1) {
-                do {
-                    System.out.print("User " + (user + 1) + ": Enter row of start cell: \n"); // read numbers from
-                                                                                              // input
-                    int startRow = in.nextInt(); //
-                    System.out.print("User " + (user + 1) + ": Enter column of start cell: \n"); //
-                    int startCol = in.nextInt(); //
-                    System.out.print("User " + (user + 1) + ": Enter row of end cell: \n"); //
-                    int endRow = in.nextInt(); //
-                    System.out.print("User " + (user + 1) + ": Enter column of end cell: \n"); //
-                    int endCol = in.nextInt(); //
-                    startRow--; //
-                    startCol--; //
-                    endRow--; //
-                    endCol--; // end
+            } while (run);
 
-                    if (startRow > -1 && startRow < 8 && startCol > -1 && startCol < 8 && endRow > -1 && endRow < 8
-                            && endCol > -1 && endCol < 8 && board[endRow][endCol] == ' ') {
-                        if (user == 0 && board[startRow][startCol] == 'x') // User 1 moves its bead
-                        {
-                            if (endRow == startRow + 1 && (endCol == startCol - 1 || endCol == startCol + 1)) {
-                                board[endRow][endCol] = 'x';
-                                board[startRow][startCol] = ' ';
-                                if (user == 0 && endRow == 7 && board[endRow][endCol] == 'x')
-                                    board[endRow][endCol] = 'X'; // the bead changes into king
-                                break;
-                            }
-                        } else if (user == 1 && board[startRow][startCol] == 'o') // User 2 moves its bead
-                        {
-                            if (endRow == startRow - 1 && (endCol == startCol - 1 || endCol == startCol + 1)) {
-                                board[endRow][endCol] = 'o';
-                                board[startRow][startCol] = ' ';
-                                if (user == 1 && endRow == 0 && board[endRow][endCol] == 'o')
-                                    board[endRow][endCol] = 'O'; // the bead changes into king
-                                break;
-                            }
-                        } else if (user == 0 && board[startRow][startCol] == 'X') // user 1 moves its King
-                        {
-                            if ((endRow == startRow - 1 || endRow == startRow + 1)
-                                    && (endCol == startCol - 1 || endCol == startCol + 1)) {
-                                board[endRow][endCol] = 'X';
-                                board[startRow][startCol] = ' ';
-                                break;
-                            }
-                        } else if (user == 1 && board[startRow][startCol] == 'O') // user 2 moves its King
-                        {
-                            if ((endRow == startRow - 1 || endRow == startRow + 1)
-                                    && (endCol == startCol - 1 || endCol == startCol + 1)) {
-                                board[endRow][endCol] = 'O';
-                                board[startRow][startCol] = ' ';
-                                break;
-                            }
-                        }
-                    }
-                    System.out.println("Please enter x valid path !");
-                } while (true);
-                drawBoard();
+            // determine valid move positions
+            legalCaptures = initLegalCaptures(board, piece, coord, startCoord);
+            legalMoves = initLegalMoves(board, piece, coord, startCoord);
+            returnVal = movePrompt(legalMoves);
+            endCol = returnVal[0];
+            endRow = returnVal[1];
+
+            board[startRow][startCol] = ' ';
+            board[endRow][endCol] = piece;
+            drawBoard(board);
+            turns++;
+
+            // switch player
+            if (player == 1) {
+                player = 2;
+                piece = 'o';
+            } else {
+                player = 1;
+                piece = 'x';
             }
-            int cntA = 0, cntB = 0;
-            for (int i = 0; i < 8; ++i) { // counts number of beads (X for user1 O for User O)
-                for (int j = 0; j < 8; ++j) {
-                    if (board[i][j] == 'x' || board[i][j] == 'X')
-                        cntA++;
-                    if (board[i][j] == 'o' || board[i][j] == 'O')
-                        cntB++;
-                }
-            }
-            if (cntA == 0) {
-                System.out.println("User 2 win!");
-                break;
-            }
-            if (cntB == 0) {
-                System.out.println("User 1 win!");
-                break;
-            }
-        } // end of the game!
-        in.close();
-    }
-
-}
-
-class Cell {
-    public int row, col;
-
-    Cell(int r, int c) {
-        this.row = r;
-        this.col = c;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public int getCol() {
-        return col;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
-    }
-
-}
-
-class Path {
-    public Cell start, end;
-
-    Path(Cell s, Cell e) {
-        this.start = s;
-        this.end = e;
-    }
-
-    public Cell getStart() {
-        return start;
-    }
-
-    public Cell getEnd() {
-        return end;
-    }
-
-    public void setStart(Cell start) {
-        this.start = start;
-    }
-
-    public void setEnd(Cell end) {
-        this.end = end;
+        }
+        System.out.printf("Game lasted %d turns\n", turns);
     }
 }
