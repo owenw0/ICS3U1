@@ -177,14 +177,14 @@ public class Checkers {
         return legalMoves;
     }
 
-    public static int[] movePrompt(String[][] legalCaptures, String[] legalMoves) {
+    public static char[][] movePrompt(char[][] board, char piece, int[] startCoord, String[][] legalCaptures,
+            String[] legalMoves) {
         // variable declaration
         boolean validMove = false;
-        String move;
-        int counter = 1, legalCaptureCount = 0, legalMoveCount = 0, choice = -1;
+        int counter = 1, legalCaptureCount = 0, legalMoveCount = 0, choice;
+        int[] captured = new int[2], coord = new int[2];
 
         System.out.println("\nSelect from valid moves:");
-
         // display possible captures
         for (int i = 0; i < legalCaptures.length && legalCaptures[i][0] != null; i++) {
             System.out.printf("%d: x%s\n", counter, legalCaptures[i][0]);
@@ -200,33 +200,53 @@ public class Checkers {
         }
 
         // prompt for move
-        while (!validMove) {
-            System.out.print("> ");
-            move = sc.nextLine();
+        do {
+            try {
+                System.out.print("> ");
+                choice = sc.nextInt();
+                sc.nextLine();
 
-            for (int i = 1; i <= 4 && !validMove; i++) {
-                if (move.equals(Integer.toString(i)) && legalMoveCount >= i) {
-                    choice = i;
+                if (choice > legalCaptureCount + legalMoveCount) {
+                    System.out.println("Invalid option.\n");
+                } else if (choice <= legalCaptureCount) {
+                    // chose to capture
+                    captured = coordToIndex(legalCaptures[choice - 1][0]);
+                    // remove captured piece
+                    board[captured[1]][captured[0]] = ' ';
+                    coord = coordToIndex(legalCaptures[choice - 1][1]);
+                    if (coord[1] == 7 || coord[1] == 0) {
+                        piece = Character.toUpperCase(piece);
+                    }
+                    // move piece to new location
+                    board[startCoord[1]][startCoord[0]] = ' ';
+                    board[coord[1]][coord[0]] = piece;
+                    validMove = true;
+                } else {
+                    // chose to move
+                    coord = coordToIndex(legalMoves[choice - legalCaptureCount - 1]);
+                    if (coord[1] == 7 || coord[1] == 0) {
+                        piece = Character.toUpperCase(piece);
+                    }
+                    // move piece to new location
+                    board[startCoord[1]][startCoord[0]] = ' ';
+                    board[coord[1]][coord[0]] = piece;
                     validMove = true;
                 }
+            } catch (InputMismatchException e) {
+                System.out.println("\nInvalid input.");
             }
-            if (!validMove) {
-                System.out.println("Invalid option.");
-            }
-        }
-
-        // chose to capture
-        return coordToIndex(legalMoves[choice - 1]);
+        } while (!validMove);
+        return board;
     }
 
     public static void main(String[] args) {
         // variable declaration
         boolean run = true, onePlayer = false, twoPlayer = false;
-        int player = 1, startRow = -1, startCol = -1, endRow, endCol, turns = 0;
+        int player = 1, startRow = -1, startCol = -1, turns = 0;
         char[][] board = new char[8][8];
         char piece = 'x';
         String playerCount, coord;
-        int[] startCoord = new int[2], returnCoord;
+        int[] startCoord = new int[2];
 
         // prompt for player count
         do {
@@ -294,17 +314,8 @@ public class Checkers {
             } while (run);
 
             // determine valid move positions
-            returnCoord = movePrompt(initLegalCaptures(board, piece, coord, startCoord),
+            board = movePrompt(board, piece, startCoord, initLegalCaptures(board, piece, coord, startCoord),
                     initLegalMoves(board, piece, coord, startCoord));
-            endCol = returnCoord[0];
-            endRow = returnCoord[1];
-
-            board[startRow][startCol] = ' ';
-            board[endRow][endCol] = piece;
-            // determine king status
-            if (endRow == 7 || endRow == 0) {
-                board[endRow][endCol] = Character.toUpperCase(piece);
-            }
             turns++;
             drawBoard(board);
 
