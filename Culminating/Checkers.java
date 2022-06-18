@@ -112,17 +112,18 @@ public class Checkers {
             for (int j = -1; j <= 1; j += 2) {
                 try {
                     if (Character.toLowerCase(board[startRow - val][startCol + j]) == oppPiece
-                            && board[startRow - val * 2][startCol + 2 * j] == ' ') {
+                            && board[startRow - val * 2][startCol + j * 2] == ' ') {
                         // available jump
                         legalCapture = "" + (char) (coord.charAt(0) + j) + (char) (coord.charAt(1) + val);
                         legalMove = "" + (char) (coord.charAt(0) + j * 2) + (char) (coord.charAt(1) + val * 2);
                         for (int k = 0; k < legalCaptures.length && !complete; k++) {
-                            if (legalCaptures[k] == null) {
+                            if (legalCaptures[k][0] == null) {
                                 legalCaptures[k][0] = legalCapture;
                                 legalCaptures[k][1] = legalMove;
                                 complete = true;
                             }
                         }
+                        complete = false;
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
                 }
@@ -154,9 +155,7 @@ public class Checkers {
             val = -1;
         }
 
-        // determine possible moves
         for (int i = 0; i < val1; i++) {
-            // check right and left of piece
             for (int j = -1; j <= 1; j += 2) {
                 try {
                     if (board[startRow - val][startCol + j] == ' ') {
@@ -168,6 +167,7 @@ public class Checkers {
                                 complete = true;
                             }
                         }
+                        complete = false;
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
                 }
@@ -181,13 +181,13 @@ public class Checkers {
         // variable declaration
         boolean validMove = false;
         String move;
-        int counter = 1, legalCount, legalCaptureCount = 0, legalMoveCount = 0, choice = -1;
+        int counter = 1, legalCaptureCount = 0, legalMoveCount = 0, choice = -1;
 
         System.out.println("\nSelect from valid moves:");
 
         // display possible captures
         for (int i = 0; i < legalCaptures.length && legalCaptures[i][0] != null; i++) {
-            System.out.printf("%d: x%s, %s\n", counter, legalCaptures[i][0], legalCaptures[i][1]);
+            System.out.printf("%d: x%s\n", counter, legalCaptures[i][0]);
             legalCaptureCount++;
             counter++;
         }
@@ -199,15 +199,13 @@ public class Checkers {
             counter++;
         }
 
-        legalCount = legalCaptureCount + legalMoveCount;
-
         // prompt for move
         while (!validMove) {
             System.out.print("> ");
             move = sc.nextLine();
 
             for (int i = 1; i <= 4 && !validMove; i++) {
-                if (move.equals(Integer.toString(i)) && legalCount >= i) {
+                if (move.equals(Integer.toString(i)) && legalMoveCount >= i) {
                     choice = i;
                     validMove = true;
                 }
@@ -217,13 +215,8 @@ public class Checkers {
             }
         }
 
-        if (legalCaptureCount < choice) {
-            // chose to move
-            return coordToIndex(legalMoves[legalMoveCount - legalCaptureCount - 1]);
-        } else {
-            // chose to capture
-            return coordToIndex(legalCaptures[choice - 1][1]);
-        }
+        // chose to capture
+        return coordToIndex(legalMoves[choice - 1]);
     }
 
     public static void main(String[] args) {
@@ -233,8 +226,6 @@ public class Checkers {
         char[][] board = new char[8][8];
         char piece = 'x';
         String playerCount, coord;
-        String[][] legalCaptures;
-        String[] legalMoves;
         int[] startCoord = new int[2], returnCoord;
 
         // prompt for player count
@@ -303,17 +294,19 @@ public class Checkers {
             } while (run);
 
             // determine valid move positions
-            legalCaptures = initLegalCaptures(board, piece, coord, startCoord);
-            legalMoves = initLegalMoves(board, piece, coord, startCoord);
-
-            returnCoord = movePrompt(legalCaptures, legalMoves);
+            returnCoord = movePrompt(initLegalCaptures(board, piece, coord, startCoord),
+                    initLegalMoves(board, piece, coord, startCoord));
             endCol = returnCoord[0];
             endRow = returnCoord[1];
 
             board[startRow][startCol] = ' ';
             board[endRow][endCol] = piece;
-            drawBoard(board);
+            // determine king status
+            if (endRow == 7 || endRow == 0) {
+                board[endRow][endCol] = Character.toUpperCase(piece);
+            }
             turns++;
+            drawBoard(board);
 
             // switch player
             if (player == 1) {
